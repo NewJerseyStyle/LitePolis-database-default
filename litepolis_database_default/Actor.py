@@ -2,8 +2,20 @@ from typing import Dict, Any, List
 
 from .Users import UserManager
 from .Conversations import ConversationManager
+from .Comments import CommentManager
+from .Vote import VoteManager
+from .Report import ReportManager
+from .MigrationRecord import MigrationRecordManager
 
-class DatabaseActor(UserManager, ConversationManager):
+
+class DatabaseActor(
+    UserManager, 
+    ConversationManager, 
+    CommentManager, 
+    VoteManager, 
+    ReportManager,
+    MigrationRecordManager
+):
     """
     DatabaseActor class for LitePolis.
 

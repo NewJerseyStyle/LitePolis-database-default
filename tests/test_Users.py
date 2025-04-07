@@ -1,11 +1,11 @@
-from litepolis_database_template.Users import UserManager
+from litepolis_database_default.Users import UserManager
 
 
 def test_create_user():
-    user = UserManager.create_user(
-        email="test@example.com",
-        password="password",
-        privilege="user")
+    user = UserManager.create_user({
+        "email": "test@example.com",
+        "auth_token": "auth_token",
+    })
     assert user.email == "test@example.com"
     assert user.id is not None
 
@@ -15,10 +15,10 @@ def test_create_user():
 
 def test_read_user():
     # Create a user first
-    user = UserManager.create_user(
-        email="test@example.com",
-        password="password",
-        privilege="user")
+    user = UserManager.create_user({
+        "email": "test@example.com",
+        "auth_token": "auth_token",
+    })
     user_id = user.id
 
     read_user = UserManager.read_user(user_id)
@@ -30,18 +30,17 @@ def test_read_user():
 
 def test_read_users():
     # Create some users first
-    UserManager.create_user(
-        email="test1@example.com",
-        password="password",
-        privilege="user"
-    )
-    UserManager.create_user(
-        email="test2@example.com",
-        password="password",
-        privilege="admin"
-    )
+    UserManager.create_user({
+        "email": "test1@example.com",
+        "auth_token": "auth_token",
+    })
+    UserManager.create_user({
+        "email": "test2@example.com",
+        "auth_token": "auth_token",
+        "is_admin": 1
+    })
 
-    users = UserManager.read_users()
+    users = UserManager.list_users()
     assert isinstance(users, list)
     assert len(users) >= 2
 
@@ -52,21 +51,22 @@ def test_read_users():
 
 def test_update_user():
     # Create a user first
-    user = UserManager.create_user(
-        email="test@example.com",
-        password="password",
-        privilege="user"
-    )
+    user = UserManager.create_user({
+        "email": "test@example.com",
+        "auth_token": "auth_token",
+    })
     user_id = user.id
 
     # Update the user
     updated_user = UserManager.update_user(
         user_id,
-        "test@example.com",
-        "password",
-        "admin"
+        {
+            "email": "test@example.com",
+            "auth_token": "auth_token",
+            "is_admin": 1
+        }
     )
-    assert updated_user.privilege == "admin"
+    assert updated_user.is_admin == 1
 
     # Clean up
     assert UserManager.delete_user(user_id)
@@ -74,10 +74,10 @@ def test_update_user():
 
 def test_delete_user():
     # Create a user first
-    user = UserManager.create_user(
-        email="test@example.com",
-        password="password",
-        privilege="user")
+    user = UserManager.create_user({
+        "email": "test@example.com",
+        "auth_token": "auth_token",
+    })
     user_id = user.id
 
     assert UserManager.delete_user(user_id)

@@ -5,12 +5,12 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "litepolis-database-template"
+name = "litepolis-database-default"
 version = "0.0.1"
 authors = [
     { name = "Your name" },
 ]
-description = "The database module for LitePolis"
+description = "The default database module for LitePolis that compatible with Polis"
 dependencies = [
     "fastapi",
     "sqlmodel",
@@ -24,7 +24,7 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.urls]
-Homepage = "https://github.com/change-to-your-repo"
+Homepage = "https://github.com/NewJerseyStyle/LitePolis-database-default"
 
 [tool.setuptools]
 include-package-data = false
