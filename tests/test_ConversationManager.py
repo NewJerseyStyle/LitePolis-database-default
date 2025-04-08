@@ -1,5 +1,5 @@
 from litepolis_database_default.Conversations import ConversationManager, Conversation
-from litepolis_database_default.Users import UserManager
+from litepolis_database_default.Actor import DatabaseActor
 import pytest
 from typing import Optional
 
@@ -10,7 +10,7 @@ def test_create_conversation():
         "email": "conv_create_user@example.com",
         "auth_token": "conv-create-token"
     }
-    user = UserManager.create_user(user_data)
+    user = DatabaseActor.create_user(user_data)
     
     # Create conversation
     conversation_data = {
@@ -30,7 +30,7 @@ def test_get_conversation():
         "email": "conv_get_user@example.com",
         "auth_token": "conv-get-token"
     }
-    user = UserManager.create_user(user_data)
+    user = DatabaseActor.create_user(user_data)
     
     # Create conversation
     conversation_data = {
@@ -51,7 +51,7 @@ def test_update_conversation():
         "email": "conv_update_user@example.com",
         "auth_token": "conv-update-token"
     }
-    user = UserManager.create_user(user_data)
+    user = DatabaseActor.create_user(user_data)
     
     # Create conversation
     conversation_data = {
@@ -76,7 +76,7 @@ def test_delete_conversation():
         "email": "conv_delete_user@example.com",
         "auth_token": "conv-delete-token"
     }
-    user = UserManager.create_user(user_data)
+    user = DatabaseActor.create_user(user_data)
     
     # Create conversation
     conversation_data = {

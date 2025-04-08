@@ -1,11 +1,12 @@
 from typing import Dict, Any, List
 
-from .Users import UserManager
 from .Conversations import ConversationManager
 from .Comments import CommentManager
+from .Users import UserManager
 from .Vote import VoteManager
 from .Report import ReportManager
 from .MigrationRecord import MigrationRecordManager
+from .utils import create_db_and_tables
 
 
 class DatabaseActor(
@@ -28,3 +29,6 @@ class DatabaseActor(
     so ensure this class name is maintained.
     """
     pass
+
+
+create_db_and_tables()

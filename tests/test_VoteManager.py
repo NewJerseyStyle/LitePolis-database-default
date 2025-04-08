@@ -1,13 +1,13 @@
 from litepolis_database_default.Vote import VoteManager, Vote
 from litepolis_database_default.Comments import CommentManager
-from litepolis_database_default.Users import UserManager
+from litepolis_database_default.Actor import DatabaseActor
 import pytest
 from typing import Optional
 
 def test_create_vote():
-    # Create test user
-    user = UserManager.create_user({
-        "email": "vote_test@example.com",
+    # Create test DatabaseActor
+    user = DatabaseActor.create_user({
+        "email": "vote_test1@example.com",
         "auth_token": "vote-token"
     })
     
@@ -30,10 +30,14 @@ def test_create_vote():
     assert vote.comment_id == comment.id
     assert vote.value == 1
 
+    assert DatabaseActor.delete_user(user.id)
+    assert CommentManager.delete_comment(comment.id)
+    assert VoteManager.delete_vote(vote.id)
+
 def test_get_vote():
-    # Create test user
-    user = UserManager.create_user({
-        "email": "vote_test@example.com",
+    # Create test DatabaseActor
+    user = DatabaseActor.create_user({
+        "email": "vote_test2@example.com",
         "auth_token": "vote-token"
     })
     
@@ -56,10 +60,14 @@ def test_get_vote():
     assert retrieved_vote.id == vote.id
     assert retrieved_vote.user_id == user.id
 
+    assert DatabaseActor.delete_user(user.id)
+    assert CommentManager.delete_comment(comment.id)
+    assert VoteManager.delete_vote(vote.id)
+
 def test_update_vote():
-    # Create test user
-    user = UserManager.create_user({
-        "email": "vote_test@example.com",
+    # Create test DatabaseActor
+    user = DatabaseActor.create_user({
+        "email": "vote_test3@example.com",
         "auth_token": "vote-token"
     })
     
@@ -84,10 +92,14 @@ def test_update_vote():
     retrieved_vote = VoteManager.read_vote(vote.id)
     assert retrieved_vote.value == -1
 
+    assert DatabaseActor.delete_user(user.id)
+    assert CommentManager.delete_comment(comment.id)
+    assert VoteManager.delete_vote(vote.id)
+
 def test_delete_vote():
-    # Create test user
-    user = UserManager.create_user({
-        "email": "vote_test@example.com",
+    # Create test DatabaseActor
+    user = DatabaseActor.create_user({
+        "email": "vote_test4@example.com",
         "auth_token": "vote-token"
     })
     
@@ -111,3 +123,6 @@ def test_delete_vote():
     # Verify deletion
     retrieved_vote = VoteManager.read_vote(vote.id)
     assert retrieved_vote is None
+
+    assert DatabaseActor.delete_user(user.id)
+    assert CommentManager.delete_comment(comment.id)

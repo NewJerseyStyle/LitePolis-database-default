@@ -1,13 +1,13 @@
 from litepolis_database_default.Report import ReportManager, Report
 from litepolis_database_default.Comments import CommentManager
-from litepolis_database_default.Users import UserManager
+from litepolis_database_default.Actor import DatabaseActor
 import pytest
 from typing import Optional
 
 def test_create_report():
     # Create test user
-    reporter = UserManager.create_user({
-        "email": "reporter@example.com",
+    reporter = DatabaseActor.create_user({
+        "email": "reporter1@example.com",
         "auth_token": "reporter-token"
     })
     
@@ -31,10 +31,15 @@ def test_create_report():
     assert report.reason == "Test reason"
     assert report.status == "pending"
 
+    # Clean up
+    assert DatabaseActor.delete_user(reporter.id)
+    assert CommentManager.delete_comment(comment.id)
+    assert ReportManager.delete_report(report.id)
+
 def test_get_report():
     # Create test user
-    reporter = UserManager.create_user({
-        "email": "reporter@example.com",
+    reporter = DatabaseActor.create_user({
+        "email": "reporter2@example.com",
         "auth_token": "reporter-token"
     })
     
@@ -57,10 +62,16 @@ def test_get_report():
     assert retrieved_report.id == report.id
     assert retrieved_report.reporter_id == reporter.id
 
+    # Clean up
+    assert DatabaseActor.delete_user(reporter.id)
+    assert CommentManager.delete_comment(comment.id)
+    assert ReportManager.delete_report(report.id)
+
+
 def test_update_report_status():
     # Create test user
-    reporter = UserManager.create_user({
-        "email": "reporter@example.com",
+    reporter = DatabaseActor.create_user({
+        "email": "reporter3@example.com",
         "auth_token": "reporter-token"
     })
     
@@ -80,16 +91,21 @@ def test_update_report_status():
     
     # Update status
     new_status = "resolved"
-    ReportManager.update_report_status(report.id, new_status)
+    ReportManager.update_report(report.id, {"status": new_status})
     
     # Verify update
     retrieved_report = ReportManager.read_report(report.id)
     assert retrieved_report.status == new_status
 
+    # Clean up
+    assert DatabaseActor.delete_user(reporter.id)
+    assert CommentManager.delete_comment(comment.id)
+    assert ReportManager.delete_report(report.id)
+
 def test_delete_report():
     # Create test user
-    reporter = UserManager.create_user({
-        "email": "reporter@example.com",
+    reporter = DatabaseActor.create_user({
+        "email": "reporter4@example.com",
         "auth_token": "reporter-token"
     })
     
@@ -113,3 +129,7 @@ def test_delete_report():
     # Verify deletion
     retrieved_report = ReportManager.read_report(report.id)
     assert retrieved_report is None
+
+    # Clean up
+    assert DatabaseActor.delete_user(reporter.id)
+    assert CommentManager.delete_comment(comment.id)

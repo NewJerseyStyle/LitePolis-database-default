@@ -1,13 +1,13 @@
 from litepolis_database_default.Comments import CommentManager, Comment
 from litepolis_database_default.Conversations import ConversationManager
-from litepolis_database_default.Users import UserManager
+from litepolis_database_default.Actor import DatabaseActor
 import pytest
 from typing import Optional
 
 def test_create_comment():
     # Create test user
-    user = UserManager.create_user({
-        "email": "comment_test@example.com",
+    user = DatabaseActor.create_user({
+        "email": "comment_test1@example.com",
         "auth_token": "comment-token"
     })
     
@@ -30,10 +30,14 @@ def test_create_comment():
     assert comment.user_id == user.id
     assert comment.conversation_id == conversation.id
 
+    assert DatabaseActor.delete_user(user.id)
+    assert ConversationManager.delete_conversation(conversation.id)
+    assert CommentManager.delete_comment(comment.id)
+
 def test_get_comment():
     # Create test user
-    user = UserManager.create_user({
-        "email": "comment_test@example.com",
+    user = DatabaseActor.create_user({
+        "email": "comment_test2@example.com",
         "auth_token": "comment-token"
     })
     
@@ -56,10 +60,14 @@ def test_get_comment():
     assert retrieved_comment.id == comment.id
     assert retrieved_comment.text == "Test comment"
 
+    assert DatabaseActor.delete_user(user.id)
+    assert ConversationManager.delete_conversation(conversation.id)
+    assert CommentManager.delete_comment(comment.id)
+
 def test_update_comment():
     # Create test user
-    user = UserManager.create_user({
-        "email": "comment_test@example.com",
+    user = DatabaseActor.create_user({
+        "email": "comment_test3@example.com",
         "auth_token": "comment-token"
     })
     
@@ -85,10 +93,14 @@ def test_update_comment():
     retrieved_comment = CommentManager.read_comment(comment.id)
     assert retrieved_comment.text == updated_text
 
+    assert DatabaseActor.delete_user(user.id)
+    assert ConversationManager.delete_conversation(conversation.id)
+    assert CommentManager.delete_comment(comment.id)
+
 def test_delete_comment():
     # Create test user
-    user = UserManager.create_user({
-        "email": "comment_test@example.com",
+    user = DatabaseActor.create_user({
+        "email": "comment_test4@example.com",
         "auth_token": "comment-token"
     })
     
@@ -112,3 +124,6 @@ def test_delete_comment():
     # Verify deletion
     retrieved_comment = CommentManager.read_comment(comment.id)
     assert retrieved_comment is None
+
+    assert DatabaseActor.delete_user(user.id)
+    assert ConversationManager.delete_conversation(conversation.id)
