@@ -32,31 +32,7 @@ conv = DatabaseActor.create_conversation({
 })
 ```
 
-## Data Schema
-
-### Users (`users`)
-```sql
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    auth_token TEXT NOT NULL,
-    is_admin BOOLEAN DEFAULT false,
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    modified TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### Conversations (`conversations`)
-```sql
-CREATE TABLE conversations (
-    id SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    description TEXT,
-    is_archived BOOLEAN DEFAULT false,
-    created TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    modified TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-```
+More usage in [Project Page](https://newjerseystyle.github.io/LitePolis-database-default)
 
 ## License
 MIT Licensed. See [LICENSE](LICENSE) for details.

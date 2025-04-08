@@ -22,13 +22,9 @@ class DatabaseActor(
 
     This class serves as the central point of interaction between the LitePolis system
     and the database module. It aggregates operations from various manager classes,
-    such as UserManager and ConversationManager, providing a unified interface
-    for database interactions.
-
-    LitePolis system is designed to interact with a class named "DatabaseActor",
-    so ensure this class name is maintained.
+    such as UserManager, ConversationManager, CommentManager, VoteManager, and ReportManager,
+    providing a unified interface for database interactions.
     """
     pass
-
 
 create_db_and_tables()

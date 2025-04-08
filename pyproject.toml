@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "litepolis-database-default"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
     { name = "Your name" },
 ]
@@ -32,5 +32,6 @@ include-package-data = false
 [tool.setuptools.packages.find]
 exclude = [
     "tests",
+    "docs",
 ]
 namespaces = false

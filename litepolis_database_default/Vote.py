@@ -1,3 +1,68 @@
+"""
+This module defines the database schema for votes, including the `Vote` model
+and `VoteManager` class for managing votes.
+
+The database schema includes tables for users, comments, and votes,
+with relationships defined between them. The `Vote` table stores information
+about individual votes, including the voter, target comment, and vote value.
+
+.. list-table:: Table Schemas
+   :header-rows: 1
+
+   * - Table Name
+     - Description
+   * - users
+     - Stores user information (id, email, auth_token, etc.).
+   * - comments
+     - Stores comment information (id, text, user_id, conversation_id, parent_comment_id, created, modified).
+   * - votes
+     - Stores vote information (id, user_id, comment_id, value, created, modified).
+
+.. list-table:: Votes Table Details
+   :header-rows: 1
+
+   * - Column Name
+     - Description
+   * - id (int)
+     - Primary key for the vote.
+   * - user_id (int, optional)
+     - Foreign key referencing the user who created the vote.
+   * - comment_id (int, optional)
+     - Foreign key referencing the comment being voted on.
+   * - value (int)
+     - The value of the vote.
+   * - created (datetime)
+     - Timestamp of when the vote was created.
+   * - modified (datetime)
+     - Timestamp of when the vote was last modified.
+
+.. list-table:: Classes
+   :header-rows: 1
+
+   * - Class Name
+     - Description
+   * - BaseModel
+     - Base class for all database models, providing common fields like `id`, `created`, and `modified`.
+   * - Vote
+     - SQLModel class representing the `votes` table.
+   * - VoteManager
+     - Provides static methods for managing votes.
+
+To use the methods in this module, import `DatabaseActor` from
+`litepolis_database_default`. For example:
+
+.. code-block:: py
+
+    from litepolis_database_default import DatabaseActor
+
+    vote = DatabaseActor.create_vote({
+        "value": 1,
+        "user_id": 1,
+        "comment_id": 1
+    })
+"""
+
+
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import UniqueConstraint, select
@@ -32,10 +97,30 @@ class Vote(BaseModel, table=True):
     comment: Optional["Comment"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.comment_id"})
 
 
+from sqlalchemy import func
+
 class VoteManager:
     @staticmethod
     def create_vote(data: Dict[str, Any]) -> Vote:
-        """Creates a new Vote record."""
+        """Creates a new Vote record.
+
+        Args:
+            data (Dict[str, Any]): A dictionary containing the data for the new Vote.
+
+        Returns:
+            Vote: The newly created Vote instance.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                vote = DatabaseActor.create_vote({
+                    "value": 1,
+                    "user_id": 1,
+                    "comment_id": 1
+                })
+        """
         with get_session() as session:
             vote_instance = Vote(**data)
             session.add(vote_instance)
@@ -45,13 +130,42 @@ class VoteManager:
 
     @staticmethod
     def read_vote(vote_id: int) -> Optional[Vote]:
-        """Reads a Vote record by ID."""
+        """Reads a Vote record by ID.
+
+        Args:
+            vote_id (int): The ID of the Vote to read.
+
+        Returns:
+            Optional[Vote]: The Vote instance if found, otherwise None.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                vote = DatabaseActor.read_vote(vote_id=1)
+        """
         with get_session() as session:
             return session.get(Vote, vote_id)
 
     @staticmethod
     def get_vote_by_user_comment(user_id: int, comment_id: int) -> Optional[Vote]:
-        """Reads a Vote record by user and comment IDs."""
+        """Reads a Vote record by user and comment IDs.
+
+        Args:
+            user_id (int): The ID of the user.
+            comment_id (int): The ID of the comment.
+
+        Returns:
+            Optional[Vote]: The Vote instance if found, otherwise None.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                vote = DatabaseActor.get_vote_by_user_comment(user_id=1, comment_id=1)
+        """
         with get_session() as session:
             return session.exec(
                 select(Vote).where(Vote.user_id == user_id, Vote.comment_id == comment_id)
@@ -60,7 +174,25 @@ class VoteManager:
 
     @staticmethod
     def list_votes_by_comment_id(comment_id: int, page: int = 1, page_size: int = 10, order_by: str = "created", order_direction: str = "asc") -> List[Vote]:
-        """Lists Vote records for a comment with pagination and sorting."""
+        """Lists Vote records for a comment with pagination and sorting.
+
+        Args:
+            comment_id (int): The ID of the comment.
+            page (int): The page number to retrieve (default: 1).
+            page_size (int): The number of votes per page (default: 10).
+            order_by (str): The field to order the votes by (default: "created").
+            order_direction (str): The direction to order the votes ("asc" or "desc", default: "asc").
+
+        Returns:
+            List[Vote]: A list of Vote instances.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                votes = DatabaseActor.list_votes_by_comment_id(comment_id=1, page=1, page_size=10, order_by="created", order_direction="asc")
+        """
         if page < 1:
             page = 1
         if page_size < 1:
@@ -84,7 +216,22 @@ class VoteManager:
 
     @staticmethod
     def update_vote(vote_id: int, data: Dict[str, Any]) -> Optional[Vote]:
-        """Updates a Vote record by ID."""
+        """Updates a Vote record by ID.
+
+        Args:
+            vote_id (int): The ID of the Vote to update.
+            data (Dict[str, Any]): A dictionary containing the data to update.
+
+        Returns:
+            Optional[Vote]: The updated Vote instance if found, otherwise None.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                updated_vote = DatabaseActor.update_vote(vote_id=1, data={"value": -1})
+        """
         with get_session() as session:
             vote_instance = session.get(Vote, vote_id)
             if not vote_instance:
@@ -98,7 +245,21 @@ class VoteManager:
 
     @staticmethod
     def delete_vote(vote_id: int) -> bool:
-        """Deletes a Vote record by ID."""
+        """Deletes a Vote record by ID.
+
+        Args:
+            vote_id (int): The ID of the Vote to delete.
+
+        Returns:
+            bool: True if the Vote was successfully deleted, False otherwise.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                success = DatabaseActor.delete_vote(vote_id=1)
+        """
         with get_session() as session:
             vote_instance = session.get(Vote, vote_id)
             if not vote_instance:
@@ -111,7 +272,23 @@ class VoteManager:
 
     @staticmethod
     def list_votes_by_user_id(user_id: int, page: int = 1, page_size: int = 10) -> List[Vote]:
-        """List votes by user id with pagination."""
+        """List votes by user id with pagination.
+
+        Args:
+            user_id (int): The ID of the user.
+            page (int): The page number to retrieve (default: 1).
+            page_size (int): The number of votes per page (default: 10).
+
+        Returns:
+            List[Vote]: A list of Vote instances.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                votes = DatabaseActor.list_votes_by_user_id(user_id=1, page=1, page_size=10)
+        """
         if page < 1:
             page = 1
         if page_size < 1:
@@ -124,7 +301,25 @@ class VoteManager:
             
     @staticmethod
     def list_votes_created_in_date_range(start_date: datetime, end_date: datetime) -> List[Vote]:
-        """List votes created in date range."""
+        """List votes created in date range.
+
+        Args:
+            start_date (datetime): The start date of the range.
+            end_date (datetime): The end date of the range.
+
+        Returns:
+            List[Vote]: A list of Vote instances.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+                from datetime import datetime
+
+                start = datetime(2023, 1, 1)
+                end = datetime(2023, 1, 31)
+                votes = DatabaseActor.list_votes_created_in_date_range(start_date=start, end_date=end)
+        """
         with get_session() as session:
             return session.exec(
                 select(Vote).where(
@@ -134,15 +329,43 @@ class VoteManager:
             
     @staticmethod
     def count_votes_for_comment(comment_id: int) -> int:
-        """Counts votes for a comment."""
+        """Counts votes for a comment.
+
+        Args:
+            comment_id (int): The ID of the comment.
+
+        Returns:
+            int: The number of votes for the comment.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                count = DatabaseActor.count_votes_for_comment(comment_id=1)
+        """
         with get_session() as session:
             return session.scalar(
-                select(Vote).where(Vote.comment_id == comment_id).count()
+                select(func.count(Vote.id)).where(Vote.comment_id == comment_id)
             ) or 0
             
     @staticmethod
     def get_vote_value_distribution_for_comment(comment_id: int) -> Dict[int, int]:
-        """Gets vote value distribution for a comment."""
+        """Gets vote value distribution for a comment.
+
+        Args:
+            comment_id (int): The ID of the comment.
+
+        Returns:
+            Dict[int, int]: A dictionary where the keys are vote values and the values are the counts.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                distribution = DatabaseActor.get_vote_value_distribution_for_comment(comment_id=1)
+        """
         with get_session() as session:
             results = session.exec(
                 select(Vote.value, func.count())
