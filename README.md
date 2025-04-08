@@ -1,48 +1,35 @@
-# LitePolis Database Module
+# LitePolis Database Default
 
-Polis-compatible database layer with PostgreSQL and SQLModel implementation.
+This is the default database module that compatible with [Polis](https://github.com/CivicTechTO/polis/).
 
 ## Quick Start
 
-### Installation
+1. Install the module:
 ```bash
 litepolis-cli add-deps litepolis-database-default
 ```
 
-### Configuration
+2. Configure database connection:
 ```yaml
-# config.yaml
-database:
-  url: "postgresql://user:pass@localhost:5432/litepolis"
-  # Optional:
-  pool_size: 5
-  timeout: 30
+# ~/.litepolis/litepolis.config
+[litepolis_database_default]
+database_url: "postgresql://user:pass@localhost:5432/litepolis"
+# database_url: "starrocks://<User>:<Password>@<Host>:<Port>/<Catalog>.<Database>"
 ```
 
-## Core API Usage
-
-### Initialize
+3. Basic usage:
 ```python
 from litepolis_database_default import DatabaseActor
-db = DatabaseActor()
-```
 
-### User Management
-```python
-# Create user
-user = db.create_user("email@example.com", "auth_token")
+user = DatabaseActor.create_user({
+    "email": "test@example.com",
+    "auth_token": "auth_token",
+})
 
-# Retrieve user
-found_user = db.get_user(user.id)  # or db.get_user_by_email(email)
-```
-
-### Conversations
-```python
-# Start conversation
-conv = db.start_conversation("Title", "Description")
-
-# Post comment
-comment = db.add_comment(conv.id, user.id, "Comment text")
+conv = DatabaseActor.create_conversation({
+    "title": "Test Conversation",
+    "description": "This is a test conversation."
+})
 ```
 
 ## Data Schema
@@ -71,46 +58,5 @@ CREATE TABLE conversations (
 );
 ```
 
-## Error Handling
-
-Common exceptions:
-- `UserExistsError`: When creating duplicate users
-- `NotFoundError`: When entities don't exist
-- `IntegrityError`: Database constraint violations
-
-```python
-try:
-    db.create_user("exists@example.com", "token")
-except UserExistsError:
-    # Handle duplicate user
-```
-
-## Testing
-
-Run tests:
-```bash
-pytest tests/
-```
-
-Test configuration includes:
-- Transaction-per-test rollback
-- Test database isolation
-- Fixture helpers
-
-## Development
-
-### Requirements
-- Python 3.10+
-- PostgreSQL 14+
-
-### Project Structure
-```
-litepolis_database_default/
-├── __init__.py       # Public interface
-├── Actor.py          # DatabaseActor implementation  
-├── models/           # SQLModel definitions
-└── managers/         # Business logic layer
-```
-
 ## License
-MIT License
+MIT Licensed. See [LICENSE](LICENSE) for details.
