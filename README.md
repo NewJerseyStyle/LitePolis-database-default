@@ -7,8 +7,7 @@ CREATE USER 'litepolis'@'%' IDENTIFIED BY 'securePass123!';
 
 GRANT ALL ON DATABASE litepolis_default TO 'litepolis'@'%';
 CREATE ROLE table_operator;  
-
-GRANT ALTER ON ALL TABLES IN DATABASE litepolis_default TO ROLE table_operator;
+GRANT ALL ON ALL TABLES IN DATABASE litepolis_default TO ROLE table_operator;
 
 GRANT table_operator TO USER 'litepolis'@'%';  
 SET DEFAULT ROLE table_operator TO 'litepolis'@'%';  
