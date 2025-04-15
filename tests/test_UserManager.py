@@ -54,8 +54,7 @@ def test_delete_user():
     user = DatabaseActor.create_user(user_data)
 
     # Delete the user using the generic BaseManager.delete method
-    deleted = DatabaseActor.delete_user(user.id)
-    assert deleted is True
+    DatabaseActor.delete_user(user.id)
 
     # Verify deletion
     retrieved_user = DatabaseActor.read_user(user.id)

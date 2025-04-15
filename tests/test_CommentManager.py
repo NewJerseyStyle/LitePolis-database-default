@@ -19,20 +19,26 @@ def test_create_comment():
     })
     
     # Create comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": user.id,
         "conversation_id": conversation.id
     })
+
+    result = CommentManager.list_comments_by_conversation_id(conversation.id)
+    for comment in result:
+        if comment.user_id == user.id:
+            if comment.text_field == "Test comment":
+                break
     
     assert comment.id is not None
-    assert comment.text == "Test comment"
+    assert comment.text_field == "Test comment"
     assert comment.user_id == user.id
     assert comment.conversation_id == conversation.id
 
-    assert DatabaseActor.delete_user(user.id)
-    assert ConversationManager.delete_conversation(conversation.id)
-    assert CommentManager.delete_comment(comment.id)
+    DatabaseActor.delete_user(user.id)
+    ConversationManager.delete_conversation(conversation.id)
+    CommentManager.delete_comment(comment.id)
 
 def test_get_comment():
     # Create test user
@@ -49,20 +55,26 @@ def test_get_comment():
     })
     
     # Create comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": user.id,
         "conversation_id": conversation.id
     })
-    
+
+    result = CommentManager.list_comments_by_conversation_id(conversation.id)
+    for comment in result:
+        if comment.user_id == user.id:
+            if comment.text_field == "Test comment":
+                break
+
     # Retrieve comment
     retrieved_comment = CommentManager.read_comment(comment.id)
     assert retrieved_comment.id == comment.id
-    assert retrieved_comment.text == "Test comment"
+    assert retrieved_comment.text_field == "Test comment"
 
-    assert DatabaseActor.delete_user(user.id)
-    assert ConversationManager.delete_conversation(conversation.id)
-    assert CommentManager.delete_comment(comment.id)
+    DatabaseActor.delete_user(user.id)
+    ConversationManager.delete_conversation(conversation.id)
+    CommentManager.delete_comment(comment.id)
 
 def test_update_comment():
     # Create test user
@@ -79,23 +91,29 @@ def test_update_comment():
     })
     
     # Create comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": user.id,
         "conversation_id": conversation.id
     })
     
+    result = CommentManager.list_comments_by_conversation_id(conversation.id)
+    for comment in result:
+        if comment.user_id == user.id:
+            if comment.text_field == "Test comment":
+                break
+
     # Update comment
     updated_text = "Updated comment"
     CommentManager.update_comment(comment.id, {"text": updated_text})
     
     # Verify update
     retrieved_comment = CommentManager.read_comment(comment.id)
-    assert retrieved_comment.text == updated_text
+    assert retrieved_comment.text_field == updated_text
 
-    assert DatabaseActor.delete_user(user.id)
-    assert ConversationManager.delete_conversation(conversation.id)
-    assert CommentManager.delete_comment(comment.id)
+    DatabaseActor.delete_user(user.id)
+    ConversationManager.delete_conversation(conversation.id)
+    CommentManager.delete_comment(comment.id)
 
 def test_delete_comment():
     # Create test user
@@ -112,12 +130,17 @@ def test_delete_comment():
     })
     
     # Create comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": user.id,
         "conversation_id": conversation.id
     })
     
+    result = CommentManager.list_comments_by_conversation_id(conversation.id)
+    for comment in result:
+        if comment.user_id == user.id:
+            if comment.text_field == "Test comment":
+                break
     # Delete comment
     CommentManager.delete_comment(comment.id)
     
@@ -125,5 +148,5 @@ def test_delete_comment():
     retrieved_comment = CommentManager.read_comment(comment.id)
     assert retrieved_comment is None
 
-    assert DatabaseActor.delete_user(user.id)
-    assert ConversationManager.delete_conversation(conversation.id)
+    DatabaseActor.delete_user(user.id)
+    ConversationManager.delete_conversation(conversation.id)

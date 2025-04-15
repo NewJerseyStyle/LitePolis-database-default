@@ -1,10 +1,10 @@
 """
-This module defines the database schema for votes, including the `Vote` model
-and `VoteManager` class for managing votes.
+This module defines the database schema for votes, including the `Vote` type hint
+and `VoteManager` class for managing votes using SQLAlchemy Core API.
 
 The database schema includes tables for users, comments, and votes,
-with relationships defined between them. The `Vote` table stores information
-about individual votes, including the voter, target comment, and vote value.
+with relationships defined between them. The `vote_table` object represents the
+votes table storing information about individual votes.
 
 .. list-table:: Table Schemas
    :header-rows: 1
@@ -42,11 +42,11 @@ about individual votes, including the voter, target comment, and vote value.
    * - Class Name
      - Description
    * - BaseModel
-     - Base class for all database models, providing common fields like `id`, `created`, and `modified`.
+     - Base class for type hinting common fields like `id`, `created`, and `modified`.
    * - Vote
-     - SQLModel class representing the `votes` table.
+     - Type hint class representing a vote record.
    * - VoteManager
-     - Provides static methods for managing votes.
+     - Provides static methods for managing votes using SQLAlchemy Core API.
 
 To use the methods in this module, import `DatabaseActor` from
 `litepolis_database_default`. For example:
@@ -55,7 +55,7 @@ To use the methods in this module, import `DatabaseActor` from
 
     from litepolis_database_default import DatabaseActor
 
-    vote = DatabaseActor.create_vote({
+    vote_data = DatabaseActor.create_vote({
         "value": 1,
         "user_id": 1,
         "comment_id": 1
@@ -63,313 +63,217 @@ To use the methods in this module, import `DatabaseActor` from
 """
 
 
-from sqlalchemy import ForeignKeyConstraint
-from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
-from sqlmodel import UniqueConstraint, select
+from sqlalchemy import (
+    Table, Column, Integer, DateTime, ForeignKey, MetaData, Index,
+    UniqueConstraint, ForeignKeyConstraint, select, insert, update, delete,
+    func, asc, desc, and_
+)
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session
+from .utils import get_session, engine, metadata
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+class BaseModel:
+    def __init__(self, id: int, created: datetime, modified: datetime):
+        self.id = id
+        self.created = created
+        self.modified = modified
 
+vote_table = Table(
+    "votes",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.id"), nullable=True),
+    Column("comment_id", Integer, ForeignKey("comments.id"), nullable=True),
+    Column("value", Integer, nullable=False),
+    Column("created", DateTime(timezone=True), default=datetime.now(UTC)),
+    Column("modified", DateTime(timezone=True), default=datetime.now(UTC), onupdate=datetime.now(UTC)), # Add onupdate
+    Index("ix_vote_user_id", "user_id"),
+    Index("ix_vote_comment_id", "comment_id"),
+    UniqueConstraint("user_id", "comment_id", name="uc_user_comment"),
+    ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_vote_user_id'),
+    ForeignKeyConstraint(['comment_id'], ['comments.id'], name='fk_vote_comment_id'),
+    starrocks_key_desc='PRIMARY KEY(id)',
+    starrocks_distribution_desc='DISTRIBUTED BY HASH(id)',
+)
 
-class Vote(BaseModel, table=True):
-    __tablename__ = "votes"
-    __table_args__ = (
-        Index("ix_vote_user_id", "user_id"),
-        Index("ix_vote_comment_id", "comment_id"),
-        UniqueConstraint("user_id", "comment_id", name="uc_user_comment"),
-        ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_vote_user_id'),
-        ForeignKeyConstraint(['comment_id'], ['comments.id'], name='fk_vote_comment_id')
-    )
-    
-    value: int  = Field(nullable=False)
-    user_id: Optional[int] = Field(default=None, foreign_key="users.id")
-    comment_id: Optional[int] = Field(default=None, foreign_key="comments.id")
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+class Vote(BaseModel): # Keep the Vote class for type hinting
+    value: int
+    user_id: Optional[int] = None
+    comment_id: Optional[int] = None
 
-    user: Optional["User"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.user_id"})
-    comment: Optional["Comment"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.comment_id"})
-
-
-from sqlalchemy import func
+    def __init__(self, id: int, created: datetime, modified: datetime, value: int, user_id: Optional[int] = None, comment_id: Optional[int] = None):
+        super().__init__(id=id, created=created, modified=modified)
+        self.value = value
+        self.user_id = user_id
+        self.comment_id = comment_id
+    # Note: Relationships like user, comment need manual handling
 
 class VoteManager:
     @staticmethod
-    def create_vote(data: Dict[str, Any]) -> Vote:
-        """Creates a new Vote record.
+    def _row_to_vote(row) -> Optional[Vote]:
+        """Converts a SQLAlchemy Row object to a Vote type hint object."""
+        if row is None:
+            return None
+        return Vote(
+            id=row.id,
+            created=row.created,
+            modified=row.modified,
+            value=row.value,
+            user_id=row.user_id,
+            comment_id=row.comment_id
+        )
 
-        Args:
-            data (Dict[str, Any]): A dictionary containing the data for the new Vote.
-
-        Returns:
-            Vote: The newly created Vote instance.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                vote = DatabaseActor.create_vote({
-                    "value": 1,
-                    "user_id": 1,
-                    "comment_id": 1
-                })
-        """
+    @staticmethod
+    def create_vote(data: Dict[str, Any]) -> Optional[Vote]:
+        """Creates a new Vote record using Core API."""
+        stmt = insert(vote_table).values(**data)
         with get_session() as session:
-            vote_instance = Vote(**data)
-            session.add(vote_instance)
-            session.commit()
-            session.refresh(vote_instance)
-            return vote_instance
+            try:
+                session.execute(stmt)
+                session.commit()
+                result = VoteManager.list_votes_by_comment_id(data["comment_id"])
+                for vote in result:
+                    if vote.user_id == data["user_id"]:
+                        return vote
+            except Exception as e:
+                session.rollback()
+                print(f"Error creating vote: {e}")
+                return None
 
     @staticmethod
     def read_vote(vote_id: int) -> Optional[Vote]:
-        """Reads a Vote record by ID.
-
-        Args:
-            vote_id (int): The ID of the Vote to read.
-
-        Returns:
-            Optional[Vote]: The Vote instance if found, otherwise None.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                vote = DatabaseActor.read_vote(vote_id=1)
-        """
+        """Reads a Vote record by ID using Core API."""
+        stmt = select(vote_table).where(vote_table.c.id == vote_id)
         with get_session() as session:
-            return session.get(Vote, vote_id)
+            result = session.execute(stmt)
+            row = result.first()
+            return VoteManager._row_to_vote(row)
 
     @staticmethod
     def get_vote_by_user_comment(user_id: int, comment_id: int) -> Optional[Vote]:
-        """Reads a Vote record by user and comment IDs.
-
-        Args:
-            user_id (int): The ID of the user.
-            comment_id (int): The ID of the comment.
-
-        Returns:
-            Optional[Vote]: The Vote instance if found, otherwise None.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                vote = DatabaseActor.get_vote_by_user_comment(user_id=1, comment_id=1)
-        """
+        """Reads a Vote record by user and comment IDs using Core API."""
+        stmt = select(vote_table).where(
+            and_(vote_table.c.user_id == user_id, vote_table.c.comment_id == comment_id)
+        )
         with get_session() as session:
-            return session.exec(
-                select(Vote).where(Vote.user_id == user_id, Vote.comment_id == comment_id)
-            ).first()
+            result = session.execute(stmt)
+            row = result.first()
+            return VoteManager._row_to_vote(row)
 
 
     @staticmethod
     def list_votes_by_comment_id(comment_id: int, page: int = 1, page_size: int = 10, order_by: str = "created", order_direction: str = "asc") -> List[Vote]:
-        """Lists Vote records for a comment with pagination and sorting.
-
-        Args:
-            comment_id (int): The ID of the comment.
-            page (int): The page number to retrieve (default: 1).
-            page_size (int): The number of votes per page (default: 10).
-            order_by (str): The field to order the votes by (default: "created").
-            order_direction (str): The direction to order the votes ("asc" or "desc", default: "asc").
-
-        Returns:
-            List[Vote]: A list of Vote instances.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                votes = DatabaseActor.list_votes_by_comment_id(comment_id=1, page=1, page_size=10, order_by="created", order_direction="asc")
-        """
+        """Lists Vote records for a comment with pagination and sorting using Core API."""
         if page < 1:
             page = 1
         if page_size < 1:
             page_size = 10
         offset = (page - 1) * page_size
-        order_column = getattr(Vote, order_by, Vote.created)  # Default to created
-        direction = "asc" if order_direction.lower() == "asc" else "desc"
-        sort_order = order_column.asc() if direction == "asc" else order_column.desc()
 
-
+        sort_column = vote_table.c.get(order_by, vote_table.c.created)
+        sort_func = desc if order_direction.lower() == "desc" else asc
+        stmt = (
+            select(vote_table)
+            .where(vote_table.c.comment_id == comment_id)
+            .order_by(sort_func(sort_column))
+            .offset(offset)
+            .limit(page_size)
+        )
+        votes = []
         with get_session() as session:
-            return session.exec(
-                select(Vote)
-                .where(Vote.comment_id == comment_id)
-                .order_by(sort_order)
-                .offset(offset)
-                .limit(page_size)
-            ).all()
-
+            result = session.execute(stmt)
+            for row in result:
+                vote = VoteManager._row_to_vote(row)
+                if vote:
+                    votes.append(vote)
+        return votes
 
 
     @staticmethod
     def update_vote(vote_id: int, data: Dict[str, Any]) -> Optional[Vote]:
-        """Updates a Vote record by ID.
-
-        Args:
-            vote_id (int): The ID of the Vote to update.
-            data (Dict[str, Any]): A dictionary containing the data to update.
-
-        Returns:
-            Optional[Vote]: The updated Vote instance if found, otherwise None.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                updated_vote = DatabaseActor.update_vote(vote_id=1, data={"value": -1})
-        """
-        with get_session() as session:
-            vote_instance = session.get(Vote, vote_id)
-            if not vote_instance:
-                return None
-            for key, value in data.items():
-                setattr(vote_instance, key, value)
-            session.add(vote_instance)
-            session.commit()
-            session.refresh(vote_instance)
-            return vote_instance
+        """Updates a Vote record by ID using Core API."""
+        if 'modified' not in data: # Ensure 'modified' timestamp is updated
+             data['modified'] = datetime.now(UTC)
+        row = VoteManager.read_vote(vote_id)
+        for k, v in vars(row).items():
+            if k not in data:
+                data[k] = v
+        VoteManager.delete_vote(vote_id)
+        return VoteManager.create_vote(data)
 
     @staticmethod
-    def delete_vote(vote_id: int) -> bool:
-        """Deletes a Vote record by ID.
-
-        Args:
-            vote_id (int): The ID of the Vote to delete.
-
-        Returns:
-            bool: True if the Vote was successfully deleted, False otherwise.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                success = DatabaseActor.delete_vote(vote_id=1)
-        """
+    def delete_vote(vote_id: int):
+        """Deletes a Vote record by ID using Core API."""
+        stmt = delete(vote_table).where(vote_table.c.id == vote_id)
         with get_session() as session:
-            vote_instance = session.get(Vote, vote_id)
-            if not vote_instance:
-                return False
-            session.delete(vote_instance)
-            session.commit()
-            return True
-            
-    
+            try:
+                session.execute(stmt)
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                print(f"Error deleting vote {vote_id}: {e}")
+
 
     @staticmethod
     def list_votes_by_user_id(user_id: int, page: int = 1, page_size: int = 10) -> List[Vote]:
-        """List votes by user id with pagination.
-
-        Args:
-            user_id (int): The ID of the user.
-            page (int): The page number to retrieve (default: 1).
-            page_size (int): The number of votes per page (default: 10).
-
-        Returns:
-            List[Vote]: A list of Vote instances.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                votes = DatabaseActor.list_votes_by_user_id(user_id=1, page=1, page_size=10)
-        """
+        """List votes by user id with pagination using Core API."""
         if page < 1:
             page = 1
         if page_size < 1:
             page_size = 10
         offset = (page - 1) * page_size
+        stmt = (
+            select(vote_table)
+            .where(vote_table.c.user_id == user_id)
+            .offset(offset)
+            .limit(page_size)
+        )
+        votes = []
         with get_session() as session:
-            return session.exec(
-                select(Vote).where(Vote.user_id == user_id).offset(offset).limit(page_size)
-            ).all()
-            
+            result = session.execute(stmt)
+            for row in result:
+                 vote = VoteManager._row_to_vote(row)
+                 if vote:
+                    votes.append(vote)
+        return votes
+
     @staticmethod
     def list_votes_created_in_date_range(start_date: datetime, end_date: datetime) -> List[Vote]:
-        """List votes created in date range.
-
-        Args:
-            start_date (datetime): The start date of the range.
-            end_date (datetime): The end date of the range.
-
-        Returns:
-            List[Vote]: A list of Vote instances.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-                from datetime import datetime
-
-                start = datetime(2023, 1, 1)
-                end = datetime(2023, 1, 31)
-                votes = DatabaseActor.list_votes_created_in_date_range(start_date=start, end_date=end)
-        """
+        """List votes created in date range using Core API."""
+        stmt = select(vote_table).where(
+            vote_table.c.created >= start_date,
+            vote_table.c.created <= end_date
+        )
+        votes = []
         with get_session() as session:
-            return session.exec(
-                select(Vote).where(
-                    Vote.created >= start_date, Vote.created <= end_date
-                )
-            ).all()
-            
+            result = session.execute(stmt)
+            for row in result:
+                 vote = VoteManager._row_to_vote(row)
+                 if vote:
+                    votes.append(vote)
+        return votes
+
     @staticmethod
     def count_votes_for_comment(comment_id: int) -> int:
-        """Counts votes for a comment.
-
-        Args:
-            comment_id (int): The ID of the comment.
-
-        Returns:
-            int: The number of votes for the comment.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                count = DatabaseActor.count_votes_for_comment(comment_id=1)
-        """
+        """Counts votes for a comment using Core API."""
+        stmt = select(func.count(vote_table.c.id)).where(vote_table.c.comment_id == comment_id)
         with get_session() as session:
-            return session.scalar(
-                select(func.count(Vote.id)).where(Vote.comment_id == comment_id)
-            ) or 0
-            
+            result = session.execute(stmt)
+            count = result.scalar()
+            return count if count is not None else 0
+
     @staticmethod
     def get_vote_value_distribution_for_comment(comment_id: int) -> Dict[int, int]:
-        """Gets vote value distribution for a comment.
-
-        Args:
-            comment_id (int): The ID of the comment.
-
-        Returns:
-            Dict[int, int]: A dictionary where the keys are vote values and the values are the counts.
-
-        Example:
-            .. code-block:: python
-
-                from litepolis_database_default import DatabaseActor
-
-                distribution = DatabaseActor.get_vote_value_distribution_for_comment(comment_id=1)
-        """
+        """Gets vote value distribution for a comment using Core API."""
+        stmt = (
+            select(vote_table.c.value, func.count(vote_table.c.id).label("count"))
+            .where(vote_table.c.comment_id == comment_id)
+            .group_by(vote_table.c.value)
+        )
+        distribution = {}
         with get_session() as session:
-            results = session.exec(
-                select(Vote.value, func.count())
-                .where(Vote.comment_id == comment_id)
-                .group_by(Vote.value)
-            ).all()
-            return {value: count for value, count in results}
+            result = session.execute(stmt)
+            for row in result:
+                distribution[row.value] = row.count
+        return distribution

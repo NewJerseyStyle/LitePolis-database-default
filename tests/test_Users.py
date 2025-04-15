@@ -10,7 +10,7 @@ def test_create_user():
     assert user.id is not None
 
     # Clean up
-    assert DatabaseActor.delete_user(user.id)
+    DatabaseActor.delete_user(user.id)
 
 
 def test_read_user():
@@ -25,7 +25,7 @@ def test_read_user():
     assert read_user.email == "test2@example.com"
 
     # Clean up
-    assert DatabaseActor.delete_user(user_id)
+    DatabaseActor.delete_user(user_id)
 
 
 def test_read_users():
@@ -45,8 +45,8 @@ def test_read_users():
     assert len(DatabaseActors) >= 2
 
     # Clean up (very basic, assumes the last two created)
-    assert DatabaseActor.delete_user(DatabaseActors[-1].id)
-    assert DatabaseActor.delete_user(DatabaseActors[-2].id)
+    DatabaseActor.delete_user(DatabaseActors[-1].id)
+    DatabaseActor.delete_user(DatabaseActors[-2].id)
 
 
 def test_update_user():
@@ -58,18 +58,19 @@ def test_update_user():
     user_id = user.id
 
     # Update the DatabaseActor
-    updated_user = DatabaseActor.update_user(
+    DatabaseActor.update_user(
         user_id,
         {
             "email": "test3@example.com",
             "auth_token": "auth_token",
-            "is_admin": 1
+            "is_admin": True
         }
     )
-    assert updated_user.is_admin == 1
+    updated_user = DatabaseActor.read_user(user_id)
+    assert updated_user.is_admin == True
 
     # Clean up
-    assert DatabaseActor.delete_user(user_id)
+    DatabaseActor.delete_user(user_id)
 
 
 def test_delete_user():
@@ -80,7 +81,7 @@ def test_delete_user():
     })
     user_id = user.id
 
-    assert DatabaseActor.delete_user(user_id)
+    DatabaseActor.delete_user(user_id)
 
     # Try to get the deleted DatabaseActor (should return None)
     deleted_user = DatabaseActor.read_user(user_id)

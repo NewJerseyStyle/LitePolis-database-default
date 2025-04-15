@@ -8,7 +8,6 @@ from .Report import ReportManager
 from .MigrationRecord import MigrationRecordManager
 from .utils import create_db_and_tables
 
-
 class DatabaseActor(
     UserManager, 
     ConversationManager, 

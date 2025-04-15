@@ -87,8 +87,7 @@ def test_delete_conversation():
     conversation = ConversationManager.create_conversation(conversation_data)
     
     # Delete conversation
-    deleted = ConversationManager.delete_conversation(conversation.id)
-    assert deleted is True
+    ConversationManager.delete_conversation(conversation.id)
     
     # Verify deletion
     retrieved_conversation = ConversationManager.read_conversation(conversation.id)

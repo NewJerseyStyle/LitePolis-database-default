@@ -1,14 +1,13 @@
 """
-This module defines the database schema for comments, including the `Comment` model
-and related functionalities for managing comments.
+This module defines the database schema for comments, including the `Comment` type hint
+and related functionalities for managing comments using SQLAlchemy Core API.
 
 The database schema includes tables for users, conversations, comments, and votes,
-with relationships defined between them. The `Comment` table stores information
-about individual comments, including the text, user, conversation, parent comment,
-and votes.
+with relationships defined between them. The `comment_table` object represents the
+comments table storing information about individual comments.
 
 The `CommentManager` class provides methods for creating, reading, updating, and
-deleting comments.
+deleting comments using SQLAlchemy Core API.
 
 .. list-table:: Table Schemas
    :header-rows: 1
@@ -50,11 +49,11 @@ deleting comments.
    * - Class Name
      - Description
    * - BaseModel
-     - Base class for all database models, providing common fields like `id`, `created`, and `modified`.
+     - Base class for type hinting common fields like `id`, `created`, and `modified`.
    * - Comment
-     - SQLModel class representing the `comments` table.
+     - Type hint class representing a comment record.
    * - CommentManager
-     - Provides static methods for managing comments.
+     - Provides static methods for managing comments using SQLAlchemy Core API.
 
 To use the methods in this module, import `DatabaseActor` from
 `litepolis_database_default`. For example:
@@ -63,310 +62,244 @@ To use the methods in this module, import `DatabaseActor` from
 
     from litepolis_database_default import DatabaseActor
 
-    comment = DatabaseActor.create_comment({
+    comment_data = DatabaseActor.create_comment({
         "text": "test@example.com",
         "user_id": 1,
         "conversation_id": 1,
     })
 """
 
-from sqlalchemy import ForeignKeyConstraint
-from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
-from sqlmodel import select
-from typing import Optional, List, Type, Any, Dict, Generator
+from sqlalchemy import (
+    ForeignKeyConstraint, Table, Column, Integer, String, DateTime,
+    ForeignKey, MetaData, Index, select, insert, update, delete, func, asc, desc
+)
+from typing import Optional, List, Type, Any, Dict, Generator, Tuple
 from datetime import datetime, UTC
 
-from .utils import create_db_and_tables, get_session
+from .utils import get_session, engine, metadata
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+class BaseModel:
+    id: int
+    created: datetime
+    modified: datetime
 
+    def __init__(self, id: int, created: datetime, modified: datetime):
+        self.id = id
+        self.created = created
+        self.modified = modified
 
-class Comment(BaseModel, table=True):
-    __tablename__ = "comments"
-    __table_args__ = (
-        Index("ix_comment_created", "created"),
-        Index("ix_comment_conversation_id", "conversation_id"),
-        Index("ix_comment_user_id", "user_id"),
-        ForeignKeyConstraint(['user_id'], ['users.id'], name='fk_comment_user_id'),
-        ForeignKeyConstraint(['conversation_id'], ['conversations.id'], name='fk_comment_conversation_id')
-    )
+comment_table = Table(
+    "comments",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("created", DateTime(timezone=True), default=datetime.now(UTC)),
+    Column("modified", DateTime(timezone=True), default=datetime.now(UTC), onupdate=datetime.now(UTC)), # Add onupdate
+    Column("text_field", String(255), nullable=False),
+    Column("user_id", Integer, ForeignKey("users.id")),
+    Column("conversation_id", Integer, ForeignKey("conversations.id")),
+    Column("parent_comment_id", Integer, ForeignKey("comments.id"), nullable=True),
+    Index("ix_comment_created", "created"),
+    Index("ix_comment_conversation_id", "conversation_id"),
+    Index("ix_comment_user_id", "user_id"),
+    starrocks_key_desc='PRIMARY KEY(id)',
+    starrocks_distribution_desc='DISTRIBUTED BY HASH(id)',
+)
 
-    text: str = Field(nullable=False)
-    user_id: Optional[int] = Field(default=None, foreign_key="users.id") # Removed redundant index=True
-    conversation_id: Optional[int] = Field(default=None, foreign_key="conversations.id") # Removed redundant index=True
-    parent_comment_id: Optional[int] = Field(default=None, foreign_key="comments.id", nullable=True)
+expected_keys = [column.key for column in comment_table.columns]
 
-    user: Optional["User"] = Relationship(back_populates="comments")
-    conversation: Optional["Conversation"] = Relationship(back_populates="comments")
-    votes: List["Vote"] = Relationship(back_populates="comment")
-    replies: List["Comment"] = Relationship(back_populates="parent_comment", sa_relationship_kwargs={"foreign_keys": "[Comment.parent_comment_id]"})
-    parent_comment: Optional["Comment"] = Relationship(back_populates="replies", sa_relationship_kwargs={"remote_side": "[Comment.id]"})
+class Comment(BaseModel): # Keep the Comment class for type hinting and potentially other logic
+    text: str
+    user_id: Optional[int] = None
+    conversation_id: Optional[int] = None
+    parent_comment_id: Optional[int] = None
+    # Note: Relationships like user, conversation, votes, replies, parent_comment
+    # need to be handled manually with separate queries when using Core API
 
+    def __init__(self, id: int, created: datetime, modified: datetime, text: str, user_id: Optional[int] = None, conversation_id: Optional[int] = None, parent_comment_id: Optional[int] = None):
+        super().__init__(id=id, created=created, modified=modified)
+        self.text_field = text
+        self.user_id = user_id
+        self.conversation_id = conversation_id
+        self.parent_comment_id = parent_comment_id
 
 class CommentManager:
     @staticmethod
-    def create_comment(data: Dict[str, Any]) -> Comment:
-        """Creates a new Comment record.
+    def _row_to_comment(row) -> Optional[Comment]:
+        """Converts a SQLAlchemy Row object to a Comment type hint object."""
+        if row is None:
+            return None
+        # Assuming row is a Row object from session.execute(...).first() or similar
+        # Access columns by index or name (e.g., row[0] or row.id)
+        # The exact structure depends on the select statement
+        # Let's assume the select fetches all columns in table order for simplicity
+        return Comment(
+            id=row.id,
+            created=row.created,
+            modified=row.modified,
+            text=row.text_field,
+            user_id=row.user_id,
+            conversation_id=row.conversation_id,
+            parent_comment_id=row.parent_comment_id
+        )
 
-        Args:
-            data (Dict[str, Any]): A dictionary containing the data for the new Comment.
-
-        Returns:
-            Comment: The newly created Comment instance.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                comment = DatabaseActor.create_comment({
-                    "text": "This is a comment.",
-                    "user_id": 1,
-                    "conversation_id": 1
-                })
-        """
+    @staticmethod
+    def create_comment(data: Dict[str, Any]):
+        """Creates a new Comment record using Core API."""
+        if 'text' in data:
+            data['text_field'] = data['text']
+            del data['text']
+        data = {k: v for k, v in data.items() if k in expected_keys}
+        stmt = insert(comment_table).values(**data)
         with get_session() as session:
-            comment_instance = Comment(**data)
-            session.add(comment_instance)
-            session.commit()
-            session.refresh(comment_instance)
-            return comment_instance
+            try:
+                session.execute(stmt)
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                print(f"Error creating comment: {e}")
+
 
     @staticmethod
     def read_comment(comment_id: int) -> Optional[Comment]:
-        """Reads a Comment record by ID.
-
-        Args:
-            comment_id (int): The ID of the Comment to read.
-
-        Returns:
-            Optional[Comment]: The Comment instance if found, otherwise None.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                comment = DatabaseActor.read_comment(comment_id=1)
-        """
+        """Reads a Comment record by ID using Core API."""
+        stmt = select(comment_table).where(comment_table.c.id == comment_id)
         with get_session() as session:
-            return session.get(Comment, comment_id)
+            result = session.execute(stmt)
+            row = result.first()
+            return CommentManager._row_to_comment(row)
 
     @staticmethod
     def list_comments_by_conversation_id(conversation_id: int, page: int = 1, page_size: int = 10, order_by: str = "created", order_direction: str = "asc") -> List[Comment]:
-        """Lists Comment records for a conversation with pagination and sorting.
-
-        Args:
-            conversation_id (int): The ID of the conversation to list comments for.
-            page (int): The page number to retrieve (default: 1).
-            page_size (int): The number of comments per page (default: 10).
-            order_by (str): The field to order the comments by (default: "created").
-            order_direction (str): The direction to order the comments in ("asc" or "desc", default: "asc").
-
-        Returns:
-            List[Comment]: A list of Comment instances for the given conversation, page, and sorting.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                comments = DatabaseActor.list_comments_by_conversation_id(conversation_id=1, page=1, page_size=10, order_by="created", order_direction="asc")
-        """
+        """Lists Comment records for a conversation using Core API."""
         if page < 1:
             page = 1
         if page_size < 1:
             page_size = 10
         offset = (page - 1) * page_size
-        order_column = getattr(Comment, order_by, Comment.created)  # Default to created
-        direction = "asc" if order_direction.lower() == "asc" else "desc"
-        sort_order = order_column.asc() if direction == "asc" else order_column.desc()
 
-
+        sort_column = comment_table.c.get(order_by, comment_table.c.created)
+        sort_func = desc if order_direction.lower() == "desc" else asc
+        stmt = (
+            select(comment_table)
+            .where(comment_table.c.conversation_id == conversation_id)
+            .order_by(sort_func(sort_column))
+            .offset(offset)
+            .limit(page_size)
+        )
+        comments = []
         with get_session() as session:
-            return session.exec(
-                select(Comment)
-                .where(Comment.conversation_id == conversation_id)
-                .order_by(sort_order)
-                .offset(offset)
-                .limit(page_size)
-            ).all()
+            result = session.execute(stmt)
+            for row in result:
+                comment = CommentManager._row_to_comment(row)
+                if comment:
+                    comments.append(comment)
+        return comments
 
 
     @staticmethod
-    def update_comment(comment_id: int, data: Dict[str, Any]) -> Optional[Comment]:
-        """Updates a Comment record by ID.
+    def update_comment(comment_id: int, data: Dict[str, Any]):
+        """Updates a Comment record by ID using Core API."""
+        if 'text' in data:
+            data['text_field'] = data['text']
+            del data['text']
+        data = {k: v for k, v in data.items() if k in expected_keys + ['modified']}
+        if 'modified' not in data: # Ensure 'modified' timestamp is updated
+             data['modified'] = datetime.now(UTC)
 
-        Args:
-            comment_id (int): The ID of the Comment to update.
-            data (Dict[str, Any]): A dictionary containing the data to update.
+        row = CommentManager.read_comment(comment_id)
+        for k, v in vars(row).items():
+            if k not in data:
+                data[k] = v
+        CommentManager.delete_comment(comment_id)
+        CommentManager.create_comment(data)
 
-        Returns:
-            Optional[Comment]: The updated Comment instance if found, otherwise None.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                updated_comment = DatabaseActor.update_comment(comment_id=1, data={"text": "Updated comment text."})
-        """
-        with get_session() as session:
-            comment_instance = session.get(Comment, comment_id)
-            if not comment_instance:
-                return None
-            for key, value in data.items():
-                setattr(comment_instance, key, value)
-            session.add(comment_instance)
-            session.commit()
-            session.refresh(comment_instance)
-            return comment_instance
 
     @staticmethod
-    def delete_comment(comment_id: int) -> bool:
-        """Deletes a Comment record by ID.
-
-        Args:
-            comment_id (int): The ID of the Comment to delete.
-
-        Returns:
-            bool: True if the Comment was successfully deleted, False otherwise.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                success = DatabaseActor.delete_comment(comment_id=1)
-        """
+    def delete_comment(comment_id: int):
+        """Deletes a Comment record by ID using Core API."""
+        stmt = delete(comment_table).where(comment_table.c.id == comment_id)
         with get_session() as session:
-            comment_instance = session.get(Comment, comment_id)
-            if not comment_instance:
-                return False
-            session.delete(comment_instance)
-            session.commit()
-            return True
-            
+            try:
+                session.execute(stmt)
+                session.commit()
+            except Exception as e:
+                session.rollback()
+                print(f"Error deleting comment {comment_id}: {e}")
+
     @staticmethod
     def search_comments(query: str) -> List[Comment]:
-        """Search comments by text content.
-
-        Args:
-            query (str): The search query.
-
-        Returns:
-            List[Comment]: A list of Comment instances matching the search query.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                comments = DatabaseActor.search_comments(query="search term")
-        """
+        """Search comments by text content using Core API."""
         search_term = f"%{query}%"
+        stmt = select(comment_table).where(comment_table.c.text_field.like(search_term))
+        comments = []
         with get_session() as session:
-            return session.exec(
-                select(Comment).where(Comment.text.like(search_term))
-            ).all()
-            
+            result = session.execute(stmt)
+            for row in result:
+                 comment = CommentManager._row_to_comment(row)
+                 if comment:
+                    comments.append(comment)
+        return comments
+
     @staticmethod
     def list_comments_by_user_id(user_id: int, page: int = 1, page_size: int = 10) -> List[Comment]:
-        """List comments by user id with pagination.
-
-        Args:
-            user_id (int): The ID of the user to list comments for.
-            page (int): The page number to retrieve (default: 1).
-            page_size (int): The number of comments per page (default: 10).
-
-        Returns:
-            List[Comment]: A list of Comment instances for the given user and page.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                comments = DatabaseActor.list_comments_by_user_id(user_id=1, page=1, page_size=10)
-        """
+        """List comments by user id with pagination using Core API."""
         if page < 1:
             page = 1
         if page_size < 1:
             page_size = 10
         offset = (page - 1) * page_size
+        stmt = (
+            select(comment_table)
+            .where(comment_table.c.user_id == user_id)
+            .offset(offset)
+            .limit(page_size)
+        )
+        comments = []
         with get_session() as session:
-            return session.exec(
-                select(Comment).where(Comment.user_id == user_id).offset(offset).limit(page_size)
-            ).all()
-            
+            result = session.execute(stmt)
+            for row in result:
+                 comment = CommentManager._row_to_comment(row)
+                 if comment:
+                    comments.append(comment)
+        return comments
+
     @staticmethod
     def list_comments_created_in_date_range(start_date: datetime, end_date: datetime) -> List[Comment]:
-        """List comments created in date range.
-
-        Args:
-            start_date (datetime): The start date of the range.
-            end_date (datetime): The end date of the range.
-
-        Returns:
-            List[Comment]: A list of Comment instances created within the given date range.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                start = datetime(2023, 1, 1)
-                end = datetime(2023, 1, 31)
-                comments = DatabaseActor.list_comments_created_in_date_range(start_date=start, end_date=end)
-        """
+        """List comments created in date range using Core API."""
+        stmt = select(comment_table).where(
+            comment_table.c.created >= start_date,
+            comment_table.c.created <= end_date
+        )
+        comments = []
         with get_session() as session:
-            return session.exec(
-                select(Comment).where(
-                    Comment.created >= start_date, Comment.created <= end_date
-                )
-            ).all()
-            
+            result = session.execute(stmt)
+            for row in result:
+                 comment = CommentManager._row_to_comment(row)
+                 if comment:
+                    comments.append(comment)
+        return comments
+
     @staticmethod
     def count_comments_in_conversation(conversation_id: int) -> int:
-        """Counts comments in a conversation.
-
-        Args:
-            conversation_id (int): The ID of the conversation to count comments in.
-
-        Returns:
-            int: The number of comments in the given conversation.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                count = DatabaseActor.count_comments_in_conversation(conversation_id=1)
-        """
+        """Counts comments in a conversation using Core API."""
+        stmt = select(func.count(comment_table.c.id)).where(
+            comment_table.c.conversation_id == conversation_id
+        )
         with get_session() as session:
-            return session.scalar(
-                select(Comment).where(Comment.conversation_id == conversation_id).count()
-            ) or 0
-            
+            result = session.execute(stmt)
+            # scalar() returns the first column of the first row, or None
+            count = result.scalar()
+            return count if count is not None else 0
+
     @staticmethod
     def get_comment_with_replies(comment_id: int) -> Optional[Comment]:
-        """Reads a Comment record by ID with replies.
-
-        Args:
-            comment_id (int): The ID of the Comment to read.
-
-        Returns:
-            Optional[Comment]: The Comment instance if found, otherwise None. Replies are loaded via relationship.
-
-        Example:
-            .. code-block:: py
-
-                from litepolis_database_default import DatabaseActor
-
-                comment = DatabaseActor.get_comment_with_replies(comment_id=1)
         """
-        with get_session() as session:
-            return session.get(Comment, comment_id) # Replies are loaded via relationship
+        Reads a Comment record by ID using Core API.
+        Note: Replies are not automatically loaded with Core API.
+        You would need a separate query to fetch replies based on parent_comment_id.
+        """
+        # This method now just fetches the comment itself.
+        # Fetching replies would require another call like:
+        # replies_stmt = select(comment_table).where(comment_table.c.parent_comment_id == comment_id)
+        # ... execute replies_stmt ...
+        return CommentManager.read_comment(comment_id)

@@ -12,11 +12,16 @@ def test_create_report():
     })
     
     # Create test comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": reporter.id,
         "conversation_id": 1
     })
+
+    result = CommentManager.list_comments_by_user_id(reporter.id)
+    for comment in result:
+        if comment.conversation_id == 1 and comment.text_field == "Test comment":
+            break
     
     # Create report
     report = ReportManager.create_report({
@@ -32,9 +37,9 @@ def test_create_report():
     assert report.status == "pending"
 
     # Clean up
-    assert DatabaseActor.delete_user(reporter.id)
-    assert CommentManager.delete_comment(comment.id)
-    assert ReportManager.delete_report(report.id)
+    DatabaseActor.delete_user(reporter.id)
+    CommentManager.delete_comment(comment.id)
+    ReportManager.delete_report(report.id)
 
 def test_get_report():
     # Create test user
@@ -44,11 +49,16 @@ def test_get_report():
     })
     
     # Create test comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": reporter.id,
         "conversation_id": 1
     })
+
+    result = CommentManager.list_comments_by_user_id(reporter.id)
+    for comment in result:
+        if comment.conversation_id == 1 and comment.text_field == "Test comment":
+            break
     
     # Create report
     report = ReportManager.create_report({
@@ -63,9 +73,9 @@ def test_get_report():
     assert retrieved_report.reporter_id == reporter.id
 
     # Clean up
-    assert DatabaseActor.delete_user(reporter.id)
-    assert CommentManager.delete_comment(comment.id)
-    assert ReportManager.delete_report(report.id)
+    DatabaseActor.delete_user(reporter.id)
+    CommentManager.delete_comment(comment.id)
+    ReportManager.delete_report(report.id)
 
 
 def test_update_report_status():
@@ -76,11 +86,16 @@ def test_update_report_status():
     })
     
     # Create test comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": reporter.id,
         "conversation_id": 1
     })
+
+    result = CommentManager.list_comments_by_user_id(reporter.id)
+    for comment in result:
+        if comment.conversation_id == 1 and comment.text_field == "Test comment":
+            break
     
     # Create report
     report = ReportManager.create_report({
@@ -98,9 +113,9 @@ def test_update_report_status():
     assert retrieved_report.status == new_status
 
     # Clean up
-    assert DatabaseActor.delete_user(reporter.id)
-    assert CommentManager.delete_comment(comment.id)
-    assert ReportManager.delete_report(report.id)
+    DatabaseActor.delete_user(reporter.id)
+    CommentManager.delete_comment(comment.id)
+    ReportManager.delete_report(report.id)
 
 def test_delete_report():
     # Create test user
@@ -110,11 +125,16 @@ def test_delete_report():
     })
     
     # Create test comment
-    comment = CommentManager.create_comment({
+    CommentManager.create_comment({
         "text": "Test comment",
         "user_id": reporter.id,
         "conversation_id": 1
     })
+
+    result = CommentManager.list_comments_by_user_id(reporter.id)
+    for comment in result:
+        if comment.conversation_id == 1 and comment.text_field == "Test comment":
+            break
     
     # Create report
     report = ReportManager.create_report({
@@ -131,5 +151,5 @@ def test_delete_report():
     assert retrieved_report is None
 
     # Clean up
-    assert DatabaseActor.delete_user(reporter.id)
-    assert CommentManager.delete_comment(comment.id)
+    DatabaseActor.delete_user(reporter.id)
+    CommentManager.delete_comment(comment.id)

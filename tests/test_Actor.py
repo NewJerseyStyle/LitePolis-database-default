@@ -1,6 +1,5 @@
 from litepolis_database_default import DatabaseActor
 
-
 def test_actor_create_user_and_conversation():
     user_data = {
         "email": "actor_test@example.com",
