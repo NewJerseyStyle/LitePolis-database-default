@@ -1,6 +1,6 @@
 # LitePolis Database Default - SQLAlchemy PoC StarRocks
 
-> 🚧👷 This is not a solution, if you want to adopt this, the query on update should be rewritten into single SQL instead of calling methods in the class to reduce the latency between `delete` and `insert`. And the `select` should also be optimized with `WHERE` and `JOIN` instead of loop in Python.
+> 🚧👷 This is not a solution, if you want to adopt this, the query on `update()` should be rewritten into single SQL instead of calling methods in the class to reduce the latency between `delete` and `insert`. And the return on `create()` should also be optimized with `WHERE` and `JOIN` instead of loop in Python.
 
 Before running the script, admin must initialize the StarRocks with correct permission setup using this SQL:
 ```sql
