@@ -1,4 +1,5 @@
 from typing import Dict, Any, List
+from sqlmodel import SQLModel
 
 from .Conversations import ConversationManager
 from .Comments import CommentManager
@@ -6,7 +7,7 @@ from .Users import UserManager
 from .Vote import VoteManager
 from .Report import ReportManager
 from .MigrationRecord import MigrationRecordManager
-from .utils import create_db_and_tables
+from .utils import engine, is_starrocks_engine
 
 
 class DatabaseActor(
@@ -27,4 +28,6 @@ class DatabaseActor(
     """
     pass
 
-create_db_and_tables()
+
+if not is_starrocks_engine():
+    SQLModel.metadata.create_all(engine)

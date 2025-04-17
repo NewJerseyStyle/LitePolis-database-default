@@ -48,17 +48,27 @@ To use the methods in this module, import DatabaseActor.  For example::
 """
 
 
+from sqlalchemy import func, DDL, text
 from sqlmodel import SQLModel, Field, Relationship, Column, Index
-from sqlmodel import select
+from sqlmodel import select, DateTime
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session 
+from .utils import (connect_db, get_session, is_starrocks_engine,
+                    wait_for_alter_completion)
 
 class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    id: Optional[int] = Field(default=None, primary_key=True)
+    created: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
+    )
+    modified: datetime = Field(
+        default_factory=lambda: datetime.now(UTC),
+        sa_column=Column(DateTime(timezone=True), 
+                        server_default=func.now(),
+                        onupdate=func.now())
+    )
 
 class Conversation(BaseModel, table=True):
     __tablename__ = "conversations"
@@ -68,6 +78,7 @@ class Conversation(BaseModel, table=True):
     )
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     title: str = Field(nullable=False)
     description: Optional[str] = None
     is_archived: bool = Field(default=False)
@@ -75,6 +86,64 @@ class Conversation(BaseModel, table=True):
     modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     comments: List["Comment"] = Relationship(back_populates="conversation")
+    user: Optional["User"] = Relationship(back_populates="conversation",
+                                          sa_relationship_kwargs={
+                                            "foreign_keys": "Conversation.user_id"})
+
+def create_starrocks_table_conversations():
+    """StarRocks-optimized conversations table creator"""
+    if not is_starrocks_engine():
+        return
+
+    engine = connect_db()
+
+    ddl = """
+    CREATE TABLE IF NOT EXISTS conversations (
+        id BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+        user_id BIGINT COMMENT 'Creater ID',
+        title VARCHAR(255) NOT NULL COMMENT 'Conversation title',
+        description STRING COMMENT 'Detailed description',
+        is_archived BOOLEAN COMMENT 'Archival status',
+        created DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time',
+        modified DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Last modified'
+    )
+    PRIMARY KEY(id)
+    DISTRIBUTED BY HASH(id)
+    """
+
+    indexes = [
+        DDL("""
+        ALTER TABLE conversations 
+        ADD INDEX idx_created (created) USING BITMAP COMMENT 'Creation time index'
+        """),
+        DDL("""
+        ALTER TABLE conversations 
+        ADD INDEX idx_archived (is_archived) USING BITMAP COMMENT 'Archival status index'
+        """)
+    ]
+
+    with engine.connect() as conn:
+        # Skip if table exists
+        if conn.execute(text("SHOW TABLES LIKE 'conversations'")).scalar():
+            return
+
+        # Create table
+        conn.execute(DDL(ddl))
+        wait_for_alter_completion(conn, "conversations")
+        
+        # Add indexes
+        for index in indexes:
+            try:
+                conn.execute(index)
+            except Exception as e:
+                print(f"Error creating index: {str(e)}")
+
+        wait_for_alter_completion(conn, "conversations")
+        print("Created StarRocks-optimized 'conversations' table")
+
+# Attach to SQLModel's metadata
+create_starrocks_table_conversations()
+
 
 class ConversationManager:
     @staticmethod
@@ -101,6 +170,14 @@ class ConversationManager:
             conversation_instance = Conversation(**data)
             session.add(conversation_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Conversation).where(
+                        Conversation.user_id == data["user_id"],
+                        Conversation.title == data["title"],
+                        Conversation.description == data["description"]
+                    )
+                ).first()
             session.refresh(conversation_instance)
             return conversation_instance
 

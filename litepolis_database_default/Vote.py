@@ -62,14 +62,14 @@ To use the methods in this module, import `DatabaseActor` from
     })
 """
 
-
+from sqlalchemy import DDL, text
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import UniqueConstraint, select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session
+from .utils import get_session, connect_db, is_starrocks_engine, wait_for_alter_completion
 
 class BaseModel(SQLModel):
     id: int = Field(primary_key=True)
@@ -95,6 +95,71 @@ class Vote(BaseModel, table=True):
 
     user: Optional["User"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.user_id"})
     comment: Optional["Comment"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.comment_id"})
+
+def create_starrocks_table_votes():
+    """Create votes table optimized for StarRocks' primary key model"""
+    if not is_starrocks_engine():
+        return
+
+    engine = connect_db()
+
+    ddl = """
+    CREATE TABLE IF NOT EXISTS votes (
+        id BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+        value INT NOT NULL COMMENT 'Vote value (-1, 0, 1)',
+        user_id BIGINT COMMENT 'Voter ID',
+        comment_id BIGINT COMMENT 'Target comment ID',
+        created DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Vote time',
+        modified DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Last modified'
+    )
+    PRIMARY KEY(id)
+    DISTRIBUTED BY HASH(id)
+    PROPERTIES (
+        "enable_persistent_index" = "true",
+        "compression" = "LZ4",
+        "bloom_filter_columns" = "user_id,comment_id",
+        "foreign_key_constraints" = "(user_id) REFERENCES users(id);(comment_id) REFERENCES comments(id)"
+    )
+    """
+
+    indexes = [
+        DDL("""
+        ALTER TABLE votes 
+        ADD INDEX idx_user (user_id) USING BITMAP COMMENT 'User-composite index'
+        """),
+        DDL("""
+        ALTER TABLE votes 
+        ADD INDEX idx_comment (comment_id) USING BITMAP COMMENT 'User-composite index'
+        """)
+    ]
+
+    with engine.connect() as conn:
+        if conn.execute(text("SHOW TABLES LIKE 'votes'")).scalar():
+            return
+
+        conn.execute(DDL(ddl))
+        wait_for_alter_completion(conn, "votes")
+        
+        # Add indexes
+        for index in indexes:
+            try:
+                conn.execute(index)
+            except Exception as e:
+                print(f"Index error: {str(e)}")
+
+        try:
+            conn.execute(DDL("""
+                ALTER TABLE votes 
+                ADD CONSTRAINT uc_user_comment UNIQUE (user_id, comment_id)
+            """))
+        except Exception as e:
+            print(f"Note: StarRocks ignores unique constraints - enforce at app layer: {str(e)}")
+
+        wait_for_alter_completion(conn, "votes")
+        print("Created StarRocks-optimized 'votes' table")
+
+# Attach to SQLModel's metadata
+create_starrocks_table_votes()
 
 
 from sqlalchemy import func
@@ -125,6 +190,13 @@ class VoteManager:
             vote_instance = Vote(**data)
             session.add(vote_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Vote).where(
+                        Vote.user_id == data["user_id"],
+                        Vote.comment_id == data["comment_id"]
+                    )
+                ).first()
             session.refresh(vote_instance)
             return vote_instance
 

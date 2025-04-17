@@ -1,9 +1,11 @@
+from sqlalchemy import DDL, text
 from sqlmodel import SQLModel, Field, Column, Index
 from sqlmodel import select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session
+from .utils import (connect_db, get_session, is_starrocks_engine,
+                    wait_for_alter_completion)
 import hashlib
 
 class MigrationRecord(SQLModel, table=True):
@@ -15,6 +17,53 @@ class MigrationRecord(SQLModel, table=True):
     hash: str = Field(nullable=False)  # Content hash
     executed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+def create_starrocks_table_migrations():
+    """Create migrations table optimized for StarRocks"""
+    if not is_starrocks_engine():
+        return
+
+    engine = connect_db()
+
+    ddl = """
+    CREATE TABLE IF NOT EXISTS migrations (
+        id VARCHAR(255) NOT NULL COMMENT 'Migration filename',
+        hash VARCHAR(64) NOT NULL COMMENT 'Content hash',
+        executed_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Execution timestamp'
+    )
+    PRIMARY KEY(id)
+    DISTRIBUTED BY HASH(id)
+    PROPERTIES (
+        "enable_persistent_index" = "true",
+        "compression" = "LZ4"
+    )
+    """
+
+    index_ddl = """
+    ALTER TABLE migrations 
+    ADD INDEX idx_executed (executed_at) USING BITMAP COMMENT 'Execution time index'
+    """
+
+    with engine.connect() as conn:
+        # Skip if table exists
+        if conn.execute(text("SHOW TABLES LIKE 'migrations'")).scalar():
+            return
+
+        # Create table
+        conn.execute(DDL(ddl))
+        wait_for_alter_completion(conn, "migrations")
+        
+        # Add index
+        try:
+            conn.execute(DDL(index_ddl))
+        except Exception as e:
+            print(f"Error creating index: {e}")
+
+        wait_for_alter_completion(conn, "migrations")
+        print("Created StarRocks-optimized 'migrations' table")
+
+# Attach to SQLModel's metadata
+create_starrocks_table_migrations()
+
 
 class MigrationRecordManager:
     @staticmethod
@@ -24,6 +73,11 @@ class MigrationRecordManager:
             migration_record_instance = MigrationRecord(**data)
             session.add(migration_record_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(MigrationRecord).where(
+                        MigrationRecord.hash == data["hash"])
+                ).first()
             session.refresh(migration_record_instance)
             return migration_record_instance
 

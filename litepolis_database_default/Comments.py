@@ -70,13 +70,16 @@ To use the methods in this module, import `DatabaseActor` from
     })
 """
 
+from sqlalchemy import inspect, DDL
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import create_db_and_tables, get_session
+from .utils import (connect_db, get_session,
+                    is_starrocks_engine,
+                    wait_for_alter_completion)
 
 class BaseModel(SQLModel):
     id: int = Field(primary_key=True)
@@ -94,7 +97,7 @@ class Comment(BaseModel, table=True):
         ForeignKeyConstraint(['conversation_id'], ['conversations.id'], name='fk_comment_conversation_id')
     )
 
-    text: str = Field(nullable=False)
+    text_field: str = Field(nullable=False)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id") # Removed redundant index=True
     conversation_id: Optional[int] = Field(default=None, foreign_key="conversations.id") # Removed redundant index=True
     parent_comment_id: Optional[int] = Field(default=None, foreign_key="comments.id", nullable=True)
@@ -104,6 +107,43 @@ class Comment(BaseModel, table=True):
     votes: List["Vote"] = Relationship(back_populates="comment")
     replies: List["Comment"] = Relationship(back_populates="parent_comment", sa_relationship_kwargs={"foreign_keys": "[Comment.parent_comment_id]"})
     parent_comment: Optional["Comment"] = Relationship(back_populates="replies", sa_relationship_kwargs={"remote_side": "[Comment.id]"})
+
+
+def create_starrocks_table_comments():
+    """Only create table if connected to StarRocks"""
+    
+    # 1. Check if using StarRocks dialect
+    if not is_starrocks_engine():
+        return
+
+    engine = connect_db()
+
+    # 2. Check if table exists
+    if inspect(engine).has_table("comments"):
+        print("Table 'comments' already exists")
+        return
+
+    # 3. Proceed with StarRocks-specific DDL
+    create_ddl = DDL("""
+    CREATE TABLE comments (
+        id BIGINT NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+        text_field STRING NOT NULL COMMENT 'Comment content',
+        user_id BIGINT COMMENT 'User ID',
+        conversation_id BIGINT COMMENT 'Conversation ID',
+        parent_comment_id BIGINT COMMENT 'Parent comment ID',
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        modified DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    PRIMARY KEY(id)
+    DISTRIBUTED BY HASH(id)
+    """)
+    
+    with engine.begin() as conn:
+        conn.execute(create_ddl)
+        wait_for_alter_completion(conn, "comments")
+
+# Attach to SQLModel's metadata
+create_starrocks_table_comments()
 
 
 class CommentManager:
@@ -132,6 +172,14 @@ class CommentManager:
             comment_instance = Comment(**data)
             session.add(comment_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Comment).where(
+                        Comment.user_id == data["user_id"],
+                        Comment.conversation_id == data["conversation_id"],
+                        Comment.text_field == data["text_field"]
+                    )
+                ).first()
             session.refresh(comment_instance)
             return comment_instance
 
@@ -270,7 +318,7 @@ class CommentManager:
         search_term = f"%{query}%"
         with get_session() as session:
             return session.exec(
-                select(Comment).where(Comment.text.like(search_term))
+                select(Comment).where(Comment.text_field.like(search_term))
             ).all()
             
     @staticmethod
