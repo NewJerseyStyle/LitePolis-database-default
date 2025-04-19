@@ -1,78 +1,78 @@
-    """
-    This module defines the database schema for reports, including the `Report` model,
-    `ReportStatus` enum, and `ReportManager` class for managing reports.
+"""
+This module defines the database schema for reports, including the `Report` model,
+`ReportStatus` enum, and `ReportManager` class for managing reports.
 
-    The database schema includes tables for users, comments, and reports,
-    with relationships defined between them. The `Report` table stores information
-    about individual reports, including the reporter, target comment, reason,
-    status, and resolution details.
+The database schema includes tables for users, comments, and reports,
+with relationships defined between them. The `Report` table stores information
+about individual reports, including the reporter, target comment, reason,
+status, and resolution details.
 
-    .. list-table:: Table Schemas
-       :header-rows: 1
+.. list-table:: Table Schemas
+    :header-rows: 1
 
-       * - Table Name
-         - Description
-       * - users
-         - Stores user information (id, email, auth_token, etc.).
-       * - comments
-         - Stores comment information (id, text, user_id, conversation_id, parent_comment_id, created, modified).
-       * - reports
-         - Stores report information (id, reporter_id, target_comment_id, reason, status, created, modified, resolved_at, resolution_notes).
+    * - Table Name
+        - Description
+    * - users
+        - Stores user information (id, email, auth_token, etc.).
+    * - comments
+        - Stores comment information (id, text, user_id, conversation_id, parent_comment_id, created, modified).
+    * - reports
+        - Stores report information (id, reporter_id, target_comment_id, reason, status, created, modified, resolved_at, resolution_notes).
 
-    .. list-table:: Reports Table Details
-       :header-rows: 1
+.. list-table:: Reports Table Details
+    :header-rows: 1
 
-       * - Column Name
-         - Description
-       * - id (int)
-         - Primary key for the report.
-       * - reporter_id (int, optional)
-         - Foreign key referencing the user who created the report.
-       * - target_comment_id (int, optional)
-         - Foreign key referencing the comment being reported.
-       * - reason (str)
-         - The reason for the report.
-       * - status (ReportStatus)
-         - The status of the report (pending, resolved, escalated).
-       * - created (datetime)
-         - Timestamp of when the report was created.
-       * - modified (datetime)
-         - Timestamp of when the report was last modified.
-       * - resolved_at (datetime, optional)
-         - Timestamp of when the report was resolved.
-       * - resolution_notes (str, optional)
-         - Notes about the resolution of the report.
+    * - Column Name
+        - Description
+    * - id (int)
+        - Primary key for the report.
+    * - reporter_id (int, optional)
+        - Foreign key referencing the user who created the report.
+    * - target_comment_id (int, optional)
+        - Foreign key referencing the comment being reported.
+    * - reason (str)
+        - The reason for the report.
+    * - status (ReportStatus)
+        - The status of the report (pending, resolved, escalated).
+    * - created (datetime)
+        - Timestamp of when the report was created.
+    * - modified (datetime)
+        - Timestamp of when the report was last modified.
+    * - resolved_at (datetime, optional)
+        - Timestamp of when the report was resolved.
+    * - resolution_notes (str, optional)
+        - Notes about the resolution of the report.
 
-    .. list-table:: Classes
-       :header-rows: 1
+.. list-table:: Classes
+    :header-rows: 1
 
-       * - Class Name
-         - Description
-       * - BaseModel
-         - Base class for all database models, providing common fields like `id`, `created`, and `modified`.
-       * - ReportStatus
-         - Enum representing the status of a report (pending, resolved, escalated).
-       * - Report
-         - SQLModel class representing the `reports` table.
-       * - ReportManager
-         - Provides static methods for managing reports.
+    * - Class Name
+        - Description
+    * - BaseModel
+        - Base class for all database models, providing common fields like `id`, `created`, and `modified`.
+    * - ReportStatus
+        - Enum representing the status of a report (pending, resolved, escalated).
+    * - Report
+        - SQLModel class representing the `reports` table.
+    * - ReportManager
+        - Provides static methods for managing reports.
 
-    To use the methods in this module, import `DatabaseActor` from
-    `litepolis_database_default`. For example:
+To use the methods in this module, import `DatabaseActor` from
+`litepolis_database_default`. For example:
 
-    .. code-block:: py
+.. code-block:: py
 
-        from litepolis_database_default import DatabaseActor
+    from litepolis_database_default import DatabaseActor
 
-        report = DatabaseActor.create_report({
-            "reporter_id": 1,
-            "target_comment_id": 2,
-            "reason": "Inappropriate content",
-            "status": "pending"
-        })
-    """
+    report = DatabaseActor.create_report({
+        "reporter_id": 1,
+        "target_comment_id": 2,
+        "reason": "Inappropriate content",
+        "status": "pending"
+    })
+"""
 
-
+from sqlalchemy import DDL, text
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey, Enum
 from sqlmodel import select
@@ -80,22 +80,17 @@ from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 import enum
 
-from .utils import get_session
-
-
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
-
+from .utils import get_session, is_starrocks_engine
 
 class ReportStatus(str, enum.Enum):
     pending = "pending"
     resolved = "resolved"
     escalated = "escalated"
 
+from .utils_StarRocks import register_table
 
-class Report(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class Report(SQLModel, table=True):
     __tablename__ = "reports"
     __table_args__ = (
         Index("ix_report_status", "status"),
@@ -147,6 +142,13 @@ class ReportManager:
             report_instance = Report(**data)
             session.add(report_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Report).where(
+                        Report.reporter_id == data["reporter_id"],
+                        Report.target_comment_id == data["target_comment_id"]
+                    )
+                ).first()
             session.refresh(report_instance)
             return report_instance
 

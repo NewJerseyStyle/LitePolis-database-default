@@ -48,19 +48,18 @@ To use the methods in this module, import DatabaseActor.  For example::
 """
 
 
+from sqlalchemy import func, DDL, text
 from sqlmodel import SQLModel, Field, Relationship, Column, Index
-from sqlmodel import select
+from sqlmodel import select, DateTime
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session 
+from .utils import get_session, is_starrocks_engine
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from .utils_StarRocks import register_table
 
-class Conversation(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class Conversation(SQLModel, table=True):
     __tablename__ = "conversations"
     __table_args__ = (
         Index("ix_conversation_created", "created"),
@@ -68,6 +67,7 @@ class Conversation(BaseModel, table=True):
     )
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     title: str = Field(nullable=False)
     description: Optional[str] = None
     is_archived: bool = Field(default=False)
@@ -75,6 +75,10 @@ class Conversation(BaseModel, table=True):
     modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     comments: List["Comment"] = Relationship(back_populates="conversation")
+    user: Optional["User"] = Relationship(back_populates="conversation",
+                                          sa_relationship_kwargs={
+                                            "foreign_keys": "Conversation.user_id"})
+
 
 class ConversationManager:
     @staticmethod
@@ -101,6 +105,14 @@ class ConversationManager:
             conversation_instance = Conversation(**data)
             session.add(conversation_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Conversation).where(
+                        Conversation.user_id == data["user_id"],
+                        Conversation.title == data["title"],
+                        Conversation.description == data["description"]
+                    )
+                ).first()
             session.refresh(conversation_instance)
             return conversation_instance
 

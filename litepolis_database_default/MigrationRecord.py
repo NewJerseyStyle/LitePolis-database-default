@@ -1,11 +1,15 @@
+from sqlalchemy import DDL, text
 from sqlmodel import SQLModel, Field, Column, Index
 from sqlmodel import select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session
+from .utils import get_session, is_starrocks_engine
 import hashlib
 
+from .utils_StarRocks import register_table
+
+@register_table(distributed_by="HASH(id)")
 class MigrationRecord(SQLModel, table=True):
     __tablename__ = "migrations"
     __table_args__ = (
@@ -24,6 +28,11 @@ class MigrationRecordManager:
             migration_record_instance = MigrationRecord(**data)
             session.add(migration_record_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(MigrationRecord).where(
+                        MigrationRecord.hash == data["hash"])
+                ).first()
             session.refresh(migration_record_instance)
             return migration_record_instance
 

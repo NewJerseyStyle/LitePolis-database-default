@@ -70,21 +70,19 @@ To use the methods in this module, import `DatabaseActor` from
     })
 """
 
+from sqlalchemy import inspect, DDL
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import create_db_and_tables, get_session
+from .utils import get_session, is_starrocks_engine
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from .utils_StarRocks import register_table
 
-
-class Comment(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class Comment(SQLModel, table=True):
     __tablename__ = "comments"
     __table_args__ = (
         Index("ix_comment_created", "created"),
@@ -94,7 +92,11 @@ class Comment(BaseModel, table=True):
         ForeignKeyConstraint(['conversation_id'], ['conversations.id'], name='fk_comment_conversation_id')
     )
 
-    text: str = Field(nullable=False)
+
+    id: int = Field(primary_key=True)
+    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    text_field: str = Field(nullable=False)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id") # Removed redundant index=True
     conversation_id: Optional[int] = Field(default=None, foreign_key="conversations.id") # Removed redundant index=True
     parent_comment_id: Optional[int] = Field(default=None, foreign_key="comments.id", nullable=True)
@@ -132,6 +134,14 @@ class CommentManager:
             comment_instance = Comment(**data)
             session.add(comment_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Comment).where(
+                        Comment.user_id == data["user_id"],
+                        Comment.conversation_id == data["conversation_id"],
+                        Comment.text_field == data["text_field"]
+                    )
+                ).first()
             session.refresh(comment_instance)
             return comment_instance
 
@@ -270,7 +280,7 @@ class CommentManager:
         search_term = f"%{query}%"
         with get_session() as session:
             return session.exec(
-                select(Comment).where(Comment.text.like(search_term))
+                select(Comment).where(Comment.text_field.like(search_term))
             ).all()
             
     @staticmethod

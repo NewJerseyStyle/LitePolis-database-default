@@ -62,22 +62,19 @@ To use the methods in this module, import `DatabaseActor` from
     })
 """
 
-
+from sqlalchemy import DDL, text
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import UniqueConstraint, select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session
+from .utils import get_session, is_starrocks_engine
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from .utils_StarRocks import register_table
 
-
-class Vote(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class Vote(SQLModel, table=True):
     __tablename__ = "votes"
     __table_args__ = (
         Index("ix_vote_user_id", "user_id"),
@@ -87,6 +84,7 @@ class Vote(BaseModel, table=True):
         ForeignKeyConstraint(['comment_id'], ['comments.id'], name='fk_vote_comment_id')
     )
     
+    id: int = Field(primary_key=True)
     value: int  = Field(nullable=False)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     comment_id: Optional[int] = Field(default=None, foreign_key="comments.id")
@@ -125,6 +123,13 @@ class VoteManager:
             vote_instance = Vote(**data)
             session.add(vote_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(Vote).where(
+                        Vote.user_id == data["user_id"],
+                        Vote.comment_id == data["comment_id"]
+                    )
+                ).first()
             session.refresh(vote_instance)
             return vote_instance
 

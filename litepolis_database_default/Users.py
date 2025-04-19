@@ -51,28 +51,27 @@ To use the methods in this module, import DatabaseActor.  For example::
     })
 """
 
+from sqlalchemy import DDL, text
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlmodel import Index, UniqueConstraint, Session, select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session 
+from .utils import get_session, is_starrocks_engine
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from .utils_StarRocks import register_table
 
-class User(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class User(SQLModel, table=True):
     __tablename__ = "users"
     __table_args__ = (
         UniqueConstraint("email", name="uq_user_email"),
         Index("ix_user_created", "created"),
         Index("ix_user_is_admin", "is_admin"),
-    )
+    ) if not is_starrocks_engine() else None
     
-    id: Optional[int] = Field(default=None, primary_key=True)
-    email: str = Field(nullable=False, unique=True)
+    id: Optional[int] = Field(primary_key=True)
+    email: str = Field(nullable=False, unique=not is_starrocks_engine())
     auth_token: str = Field(nullable=False)
     is_admin: bool = Field(default=False)
     created: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -81,27 +80,33 @@ class User(BaseModel, table=True):
     reports: List["Report"] = Relationship(back_populates="reporter")
     comments: List["Comment"] = Relationship(back_populates="user")
     votes: List["Vote"] = Relationship(back_populates="user")
+    conversation: List["Conversation"] = Relationship(back_populates="user")
+
 
 class UserManager:
     @staticmethod
-    def create_user(data: Dict[str, Any]) -> User:
-        """Creates a new User record.
+    def create_user(data: Dict[str, Any]) -> Optional[User]:
+        """Direct SQL insert for StarRocks"""
+        if is_starrocks_engine():
+            with get_session() as session:
+                existing = session.exec(
+                    select(User).where(User.email == data["email"])
+                ).first()
+                
+            if existing:
+                print("Email already exists")
+                return None
 
-        To use this method, import DatabaseActor.  For example::
-
-            from litepolis_database_default import DatabaseActor
-
-            user = DatabaseActor.create_user({
-                "email": "test@example.com",
-                "auth_token": "auth_token",
-            })
-        """
+        user = User(**data)
         with get_session() as session:
-            user_instance = User(**data)
-            session.add(user_instance)
+            session.add(user)
             session.commit()
-            session.refresh(user_instance)
-            return user_instance
+            if is_starrocks_engine():
+                return session.exec(
+                    select(User).where(User.email == data["email"])
+                ).first()
+            session.refresh(user)
+            return user
 
     @staticmethod
     def read_user(user_id: int) -> Optional[User]:
