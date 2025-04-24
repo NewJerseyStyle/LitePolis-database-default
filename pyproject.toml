@@ -6,9 +6,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "litepolis-database-default"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
-    { name = "Your name" },
+    { name = "NewJerseyStyle" },
 ]
 description = "The default database module for LitePolis that compatible with Polis"
 dependencies = [
