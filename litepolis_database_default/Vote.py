@@ -41,8 +41,6 @@ about individual votes, including the voter, target comment, and vote value.
 
    * - Class Name
      - Description
-   * - BaseModel
-     - Base class for all database models, providing common fields like `id`, `created`, and `modified`.
    * - Vote
      - SQLModel class representing the `votes` table.
    * - VoteManager
@@ -62,22 +60,19 @@ To use the methods in this module, import `DatabaseActor` from
     })
 """
 
-
+from sqlalchemy import DDL, text
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import UniqueConstraint, select
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session
+from .utils import get_session, is_starrocks_engine
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from .utils_StarRocks import register_table
 
-
-class Vote(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class Vote(SQLModel, table=True):
     __tablename__ = "votes"
     __table_args__ = (
         Index("ix_vote_user_id", "user_id"),
@@ -87,6 +82,7 @@ class Vote(BaseModel, table=True):
         ForeignKeyConstraint(['comment_id'], ['comments.id'], name='fk_vote_comment_id')
     )
     
+    id: int = Field(primary_key=True)
     value: int  = Field(nullable=False)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     comment_id: Optional[int] = Field(default=None, foreign_key="comments.id")
@@ -98,14 +94,21 @@ class Vote(BaseModel, table=True):
 
 
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 
 class VoteManager:
     @staticmethod
     def create_vote(data: Dict[str, Any]) -> Vote:
         """Creates a new Vote record.
 
+        Note:
+            This operation may raise exceptions (e.g., `IntegrityError`) if:
+            - A vote already exists for the given `user_id` and `comment_id` (due to unique constraint).
+            - The `user_id` or `comment_id` do not reference existing records in the `users` or `comments` tables (due to foreign key constraints).
+
         Args:
             data (Dict[str, Any]): A dictionary containing the data for the new Vote.
+                                   Must include 'value', 'user_id', and 'comment_id'.
 
         Returns:
             Vote: The newly created Vote instance.
@@ -125,6 +128,16 @@ class VoteManager:
             vote_instance = Vote(**data)
             session.add(vote_instance)
             session.commit()
+            if is_starrocks_engine():
+                # StarRocks doesn't support session.refresh on models with default primary keys
+                # after commit, so we re-query to get the full object including the generated ID.
+                # This relies on the unique constraint (user_id, comment_id) to find the specific vote.
+                return session.exec(
+                    select(Vote).where(
+                        Vote.user_id == data["user_id"],
+                        Vote.comment_id == data["comment_id"]
+                    )
+                ).first()
             session.refresh(vote_instance)
             return vote_instance
 
@@ -181,10 +194,11 @@ class VoteManager:
             page (int): The page number to retrieve (default: 1).
             page_size (int): The number of votes per page (default: 10).
             order_by (str): The field to order the votes by (default: "created").
+                            Must be a valid attribute name of the Vote model.
             order_direction (str): The direction to order the votes ("asc" or "desc", default: "asc").
 
         Returns:
-            List[Vote]: A list of Vote instances.
+            List[Vote]: A list of Vote instances. Returns an empty list if no votes are found for the comment or page.
 
         Example:
             .. code-block:: python
@@ -198,7 +212,8 @@ class VoteManager:
         if page_size < 1:
             page_size = 10
         offset = (page - 1) * page_size
-        order_column = getattr(Vote, order_by, Vote.created)  # Default to created
+        # Safely get the order column, defaulting to created if the provided name is invalid
+        order_column = getattr(Vote, order_by, Vote.created)
         direction = "asc" if order_direction.lower() == "asc" else "desc"
         sort_order = order_column.asc() if direction == "asc" else order_column.desc()
 
@@ -221,9 +236,11 @@ class VoteManager:
         Args:
             vote_id (int): The ID of the Vote to update.
             data (Dict[str, Any]): A dictionary containing the data to update.
+                                   Keys should match Vote model attributes.
 
         Returns:
             Optional[Vote]: The updated Vote instance if found, otherwise None.
+                            Returns None if the vote with the given ID does not exist.
 
         Example:
             .. code-block:: python
@@ -237,9 +254,20 @@ class VoteManager:
             if not vote_instance:
                 return None
             for key, value in data.items():
-                setattr(vote_instance, key, value)
+                # Avoid updating primary key or timestamps managed by the database
+                if key not in ["id", "created", "modified"]:
+                    setattr(vote_instance, key, value)
             session.add(vote_instance)
             session.commit()
+            if is_starrocks_engine():
+                # StarRocks doesn't support session.refresh on models with default primary keys
+                # after commit, so we re-query to get the full object including the generated ID.
+                # This relies on the unique constraint (user_id, comment_id) to find the specific vote.
+                return session.exec(
+                    select(Vote).where(
+                        Vote.id == vote_id
+                    )
+                ).first()
             session.refresh(vote_instance)
             return vote_instance
 
@@ -252,6 +280,7 @@ class VoteManager:
 
         Returns:
             bool: True if the Vote was successfully deleted, False otherwise.
+                  Returns False if the vote with the given ID does not exist.
 
         Example:
             .. code-block:: python
@@ -280,7 +309,7 @@ class VoteManager:
             page_size (int): The number of votes per page (default: 10).
 
         Returns:
-            List[Vote]: A list of Vote instances.
+            List[Vote]: A list of Vote instances. Returns an empty list if no votes are found for the user or page.
 
         Example:
             .. code-block:: python
@@ -304,11 +333,11 @@ class VoteManager:
         """List votes created in date range.
 
         Args:
-            start_date (datetime): The start date of the range.
-            end_date (datetime): The end date of the range.
+            start_date (datetime): The start date of the range (inclusive).
+            end_date (datetime): The end date of the range (inclusive).
 
         Returns:
-            List[Vote]: A list of Vote instances.
+            List[Vote]: A list of Vote instances. Returns an empty list if no votes are found in the range.
 
         Example:
             .. code-block:: python
@@ -335,7 +364,7 @@ class VoteManager:
             comment_id (int): The ID of the comment.
 
         Returns:
-            int: The number of votes for the comment.
+            int: The number of votes for the comment. Returns 0 if no votes are found for the comment.
 
         Example:
             .. code-block:: python
@@ -358,6 +387,7 @@ class VoteManager:
 
         Returns:
             Dict[int, int]: A dictionary where the keys are vote values and the values are the counts.
+                            Returns an empty dictionary if no votes are found for the comment.
 
         Example:
             .. code-block:: python

@@ -31,22 +31,6 @@ Conversations module
    :show-inheritance:
    :undoc-members:
 
-MigrationRecord module
----------------------------------------------------
-
-.. automodule:: litepolis_database_default.MigrationRecord
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-Report module
-------------------------------------------
-
-.. automodule:: litepolis_database_default.Report
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Users module
 -----------------------------------------
 
@@ -70,6 +54,14 @@ utils module
    :members:
    :show-inheritance:
    :undoc-members:
+
+utils_StarRocks module
+--------------------------------------------
+
+.. automodule:: litepolis_database_default.utils_StarRocks
+  :members:
+  :show-inheritance:
+  :undoc-members:
 
 Module contents
 ---------------

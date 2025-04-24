@@ -47,13 +47,6 @@
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#actor-module">Actor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default.Comments">Comments module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Comments.BaseModel"><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.BaseModel.created"><code class="docutils literal notranslate"><span class="pre">BaseModel.created</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.BaseModel.id"><code class="docutils literal notranslate"><span class="pre">BaseModel.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.BaseModel.model_config"><code class="docutils literal notranslate"><span class="pre">BaseModel.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.BaseModel.modified"><code class="docutils literal notranslate"><span class="pre">BaseModel.modified</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Comments.Comment"><code class="docutils literal notranslate"><span class="pre">Comment</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.conversation"><code class="docutils literal notranslate"><span class="pre">Comment.conversation</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.conversation_id"><code class="docutils literal notranslate"><span class="pre">Comment.conversation_id</span></code></a></li>
@@ -64,7 +57,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.parent_comment"><code class="docutils literal notranslate"><span class="pre">Comment.parent_comment</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.parent_comment_id"><code class="docutils literal notranslate"><span class="pre">Comment.parent_comment_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.replies"><code class="docutils literal notranslate"><span class="pre">Comment.replies</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.text"><code class="docutils literal notranslate"><span class="pre">Comment.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.text_field"><code class="docutils literal notranslate"><span class="pre">Comment.text_field</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.user"><code class="docutils literal notranslate"><span class="pre">Comment.user</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.user_id"><code class="docutils literal notranslate"><span class="pre">Comment.user_id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.votes"><code class="docutils literal notranslate"><span class="pre">Comment.votes</span></code></a></li>
@@ -86,13 +79,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default.Conversations">Conversations module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Conversations.BaseModel"><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.BaseModel.created"><code class="docutils literal notranslate"><span class="pre">BaseModel.created</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.BaseModel.id"><code class="docutils literal notranslate"><span class="pre">BaseModel.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.BaseModel.model_config"><code class="docutils literal notranslate"><span class="pre">BaseModel.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.BaseModel.modified"><code class="docutils literal notranslate"><span class="pre">BaseModel.modified</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation"><code class="docutils literal notranslate"><span class="pre">Conversation</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.comments"><code class="docutils literal notranslate"><span class="pre">Conversation.comments</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.created"><code class="docutils literal notranslate"><span class="pre">Conversation.created</span></code></a></li>
@@ -102,6 +88,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.model_config"><code class="docutils literal notranslate"><span class="pre">Conversation.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.modified"><code class="docutils literal notranslate"><span class="pre">Conversation.modified</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.title"><code class="docutils literal notranslate"><span class="pre">Conversation.title</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.user"><code class="docutils literal notranslate"><span class="pre">Conversation.user</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.user_id"><code class="docutils literal notranslate"><span class="pre">Conversation.user_id</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Conversations.ConversationManager"><code class="docutils literal notranslate"><span class="pre">ConversationManager</span></code></a><ul>
@@ -119,26 +107,17 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#migrationrecord-module">MigrationRecord module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#report-module">Report module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default.Users">Users module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Users.BaseModel"><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.BaseModel.created"><code class="docutils literal notranslate"><span class="pre">BaseModel.created</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.BaseModel.id"><code class="docutils literal notranslate"><span class="pre">BaseModel.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.BaseModel.model_config"><code class="docutils literal notranslate"><span class="pre">BaseModel.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.BaseModel.modified"><code class="docutils literal notranslate"><span class="pre">BaseModel.modified</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Users.User"><code class="docutils literal notranslate"><span class="pre">User</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.auth_token"><code class="docutils literal notranslate"><span class="pre">User.auth_token</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.comments"><code class="docutils literal notranslate"><span class="pre">User.comments</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.conversation"><code class="docutils literal notranslate"><span class="pre">User.conversation</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.created"><code class="docutils literal notranslate"><span class="pre">User.created</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.email"><code class="docutils literal notranslate"><span class="pre">User.email</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.id"><code class="docutils literal notranslate"><span class="pre">User.id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.is_admin"><code class="docutils literal notranslate"><span class="pre">User.is_admin</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.model_config"><code class="docutils literal notranslate"><span class="pre">User.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.modified"><code class="docutils literal notranslate"><span class="pre">User.modified</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.reports"><code class="docutils literal notranslate"><span class="pre">User.reports</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Users.User.votes"><code class="docutils literal notranslate"><span class="pre">User.votes</span></code></a></li>
 </ul>
 </li>
@@ -158,13 +137,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default.Vote">Vote module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Vote.BaseModel"><code class="docutils literal notranslate"><span class="pre">BaseModel</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Vote.BaseModel.created"><code class="docutils literal notranslate"><span class="pre">BaseModel.created</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Vote.BaseModel.id"><code class="docutils literal notranslate"><span class="pre">BaseModel.id</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Vote.BaseModel.model_config"><code class="docutils literal notranslate"><span class="pre">BaseModel.model_config</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Vote.BaseModel.modified"><code class="docutils literal notranslate"><span class="pre">BaseModel.modified</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.Vote.Vote"><code class="docutils literal notranslate"><span class="pre">Vote</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Vote.Vote.comment"><code class="docutils literal notranslate"><span class="pre">Vote.comment</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Vote.Vote.comment_id"><code class="docutils literal notranslate"><span class="pre">Vote.comment_id</span></code></a></li>
@@ -194,11 +166,20 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default.utils">utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils.connect_db"><code class="docutils literal notranslate"><span class="pre">connect_db()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils.create_db_and_tables"><code class="docutils literal notranslate"><span class="pre">create_db_and_tables()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils.get_session"><code class="docutils literal notranslate"><span class="pre">get_session()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils.is_starrocks_engine"><code class="docutils literal notranslate"><span class="pre">is_starrocks_engine()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils.wait_for_alter_completion"><code class="docutils literal notranslate"><span class="pre">wait_for_alter_completion()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default.utils_StarRocks">utils_StarRocks module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils_StarRocks.create_db_and_tables"><code class="docutils literal notranslate"><span class="pre">create_db_and_tables()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils_StarRocks.generate_custom_ddl_for_table"><code class="docutils literal notranslate"><span class="pre">generate_custom_ddl_for_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils_StarRocks.get_hints_for_table"><code class="docutils literal notranslate"><span class="pre">get_hints_for_table()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils_StarRocks.populate_registry"><code class="docutils literal notranslate"><span class="pre">populate_registry()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#litepolis_database_default.utils_StarRocks.register_table"><code class="docutils literal notranslate"><span class="pre">register_table()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-litepolis_database_default">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -243,13 +224,15 @@ providing a unified interface for database interactions.</p>
 <section id="module-litepolis_database_default.Comments">
 <span id="comments-module"></span><h2>Comments module<a class="headerlink" href="#module-litepolis_database_default.Comments" title="Link to this heading"></a></h2>
 <p>This module defines the database schema for comments, including the <cite>Comment</cite> model
-and related functionalities for managing comments.</p>
-<p>The database schema includes tables for users, conversations, comments, and votes,
-with relationships defined between them. The <cite>Comment</cite> table stores information
-about individual comments, including the text, user, conversation, parent comment,
-and votes.</p>
-<p>The <cite>CommentManager</cite> class provides methods for creating, reading, updating, and
-deleting comments.</p>
+and the <cite>CommentManager</cite> class for managing comment data.</p>
+<p>The <cite>Comment</cite> model represents the <cite>comments</cite> table and includes fields for
+the comment’s content (<cite>text_field</cite>), timestamps (<cite>created</cite>, <cite>modified</cite>),
+and foreign keys linking to the user (<cite>user_id</cite>), conversation (<cite>conversation_id</cite>),
+and parent comment (<cite>parent_comment_id</cite>). It also defines relationships to
+related <cite>User</cite>, <cite>Conversation</cite>, <cite>Vote</cite>, and other <cite>Comment</cite> instances (for replies).</p>
+<p>The <cite>CommentManager</cite> class provides static methods for common database operations
+on comments, such as creating, reading, updating, deleting, listing by various
+criteria (conversation, user, date range), searching, and counting.</p>
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-text">Table Schemas</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <thead>
@@ -265,7 +248,10 @@ deleting comments.</p>
 <td><p>Stores conversation information (id, title, etc.).</p></td>
 </tr>
 <tr class="row-even"><td><p>comments</p></td>
-<td><p>Stores comment information (id, text, user_id, conversation_id, parent_comment_id, created, modified).</p></td>
+<td><p>Stores comment information (id, text_field, user_id, conversation_id, parent_comment_id, created, modified).</p></td>
+</tr>
+<tr class="row-odd"><td><p>votes</p></td>
+<td><p>Stores vote information (id, user_id, comment_id, value).</p></td>
 </tr>
 </tbody>
 </table>
@@ -280,7 +266,7 @@ deleting comments.</p>
 <tr class="row-even"><td><p>id (int)</p></td>
 <td><p>Primary key for the comment.</p></td>
 </tr>
-<tr class="row-odd"><td><p>text (str)</p></td>
+<tr class="row-odd"><td><p>text_field (str)</p></td>
 <td><p>The content of the comment.</p></td>
 </tr>
 <tr class="row-even"><td><p>user_id (int, optional)</p></td>
@@ -298,8 +284,20 @@ deleting comments.</p>
 <tr class="row-even"><td><p>modified (datetime)</p></td>
 <td><p>Timestamp of when the comment was last modified.</p></td>
 </tr>
-<tr class="row-odd"><td><p>votes</p></td>
-<td><p>Stores vote information (id, user_id, comment_id, value).</p></td>
+<tr class="row-odd"><td><p>user (Relationship)</p></td>
+<td><p>Relationship to the User who created the comment.</p></td>
+</tr>
+<tr class="row-even"><td><p>conversation (Relationship)</p></td>
+<td><p>Relationship to the Conversation the comment belongs to.</p></td>
+</tr>
+<tr class="row-odd"><td><p>votes (Relationship)</p></td>
+<td><p>Relationship to the Votes associated with this comment.</p></td>
+</tr>
+<tr class="row-even"><td><p>replies (Relationship)</p></td>
+<td><p>Relationship to other Comments that are replies to this comment.</p></td>
+</tr>
+<tr class="row-odd"><td><p>parent_comment (Relationship)</p></td>
+<td><p>Relationship to the parent Comment if this is a reply.</p></td>
 </tr>
 </tbody>
 </table>
@@ -311,14 +309,11 @@ deleting comments.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>BaseModel</p></td>
-<td><p>Base class for all database models, providing common fields like <cite>id</cite>, <cite>created</cite>, and <cite>modified</cite>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Comment</p></td>
+<tr class="row-even"><td><p>Comment</p></td>
 <td><p>SQLModel class representing the <cite>comments</cite> table.</p></td>
 </tr>
-<tr class="row-even"><td><p>CommentManager</p></td>
-<td><p>Provides static methods for managing comments.</p></td>
+<tr class="row-odd"><td><p>CommentManager</p></td>
+<td><p>Provides static methods for managing comments (create, read, update, delete, list, search, count).</p></td>
 </tr>
 </tbody>
 </table>
@@ -327,43 +322,16 @@ deleting comments.</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
 <span class="n">comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_comment</span><span class="p">({</span>
-    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test comment.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;conversation_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">})</span>
 </pre></div>
 </div>
 <dl class="py class">
-<dt class="sig sig-object py" id="litepolis_database_default.Comments.BaseModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Comments.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Comments.BaseModel" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Comments.BaseModel.created">
-<span class="sig-name descname"><span class="pre">created</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Comments.BaseModel.created" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Comments.BaseModel.id">
-<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#litepolis_database_default.Comments.BaseModel.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Comments.BaseModel.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'registry':</span> <span class="pre">PydanticUndefined}</span></em><a class="headerlink" href="#litepolis_database_default.Comments.BaseModel.model_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Comments.BaseModel.modified">
-<span class="sig-name descname"><span class="pre">modified</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Comments.BaseModel.modified" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Comments.</span></span><span class="sig-name descname"><span class="pre">Comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_comment_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Comments.Comment" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#litepolis_database_default.Comments.BaseModel" title="litepolis_database_default.Comments.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Comments.</span></span><span class="sig-name descname"><span class="pre">Comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_field:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_comment_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Comments.Comment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment.conversation">
 <span class="sig-name descname"><span class="pre">conversation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation" title="litepolis_database_default.Conversations.Conversation"><span class="pre">Conversation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Comments.Comment.conversation" title="Link to this definition"></a></dt>
@@ -411,8 +379,8 @@ deleting comments.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment.text">
-<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#litepolis_database_default.Comments.Comment.text" title="Link to this definition"></a></dt>
+<dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment.text_field">
+<span class="sig-name descname"><span class="pre">text_field</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#litepolis_database_default.Comments.Comment.text_field" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -443,7 +411,7 @@ deleting comments.</p>
 <dl>
 <dt>Args:</dt><dd><p>conversation_id (int): The ID of the conversation to count comments in.</p>
 </dd>
-<dt>Returns:</dt><dd><p>int: The number of comments in the given conversation.</p>
+<dt>Returns:</dt><dd><p>int: The number of comments in the given conversation. Returns 0 if no comments are found.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -459,14 +427,18 @@ deleting comments.</p>
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a></span></span><a class="headerlink" href="#litepolis_database_default.Comments.CommentManager.create_comment" title="Link to this definition"></a></dt>
 <dd><p>Creates a new Comment record.</p>
 <dl>
-<dt>Args:</dt><dd><p>data (Dict[str, Any]): A dictionary containing the data for the new Comment.</p>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data (Dict[str, Any]): A dictionary containing the data for the new Comment.</dt><dd><p>Must include ‘text_field’, ‘user_id’, ‘conversation_id’,
+‘parent_comment_id’.</p>
+</dd>
+</dl>
 </dd>
 <dt>Returns:</dt><dd><p>Comment: The newly created Comment instance.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
 <span class="n">comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_comment</span><span class="p">({</span>
-    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a comment.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a comment.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;conversation_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">})</span>
@@ -497,15 +469,22 @@ deleting comments.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.CommentManager.get_comment_with_replies">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_comment_with_replies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.Comments.CommentManager.get_comment_with_replies" title="Link to this definition"></a></dt>
-<dd><p>Reads a Comment record by ID with replies.</p>
+<dd><p>Reads a Comment record by ID and loads its direct replies.</p>
 <dl>
 <dt>Args:</dt><dd><p>comment_id (int): The ID of the Comment to read.</p>
 </dd>
-<dt>Returns:</dt><dd><p>Optional[Comment]: The Comment instance if found, otherwise None. Replies are loaded via relationship.</p>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Optional[Comment]: The Comment instance if found, otherwise None.</dt><dd><p>Direct replies are loaded automatically via the ‘replies’ relationship.</p>
+</dd>
+</dl>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
 <span class="n">comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">get_comment_with_replies</span><span class="p">(</span><span class="n">comment_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">comment</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Comment: </span><span class="si">{</span><span class="n">comment</span><span class="o">.</span><span class="n">text_field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">reply</span> <span class="ow">in</span> <span class="n">comment</span><span class="o">.</span><span class="n">replies</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- Reply: </span><span class="si">{</span><span class="n">reply</span><span class="o">.</span><span class="n">text_field</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
@@ -520,8 +499,11 @@ deleting comments.</p>
 <dt>Args:</dt><dd><p>conversation_id (int): The ID of the conversation to list comments for.
 page (int): The page number to retrieve (default: 1).
 page_size (int): The number of comments per page (default: 10).
-order_by (str): The field to order the comments by (default: “created”).
-order_direction (str): The direction to order the comments in (“asc” or “desc”, default: “asc”).</p>
+order_by (str): The field to order the comments by (default: “created”).</p>
+<blockquote>
+<div><p>Must be a valid column name of the Comment model.</p>
+</div></blockquote>
+<p>order_direction (str): The direction to order the comments in (“asc” or “desc”, default: “asc”).</p>
 </dd>
 <dt>Returns:</dt><dd><p>List[Comment]: A list of Comment instances for the given conversation, page, and sorting.</p>
 </dd>
@@ -557,17 +539,18 @@ page_size (int): The number of comments per page (default: 10).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.CommentManager.list_comments_created_in_date_range">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_comments_created_in_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Comments.CommentManager.list_comments_created_in_date_range" title="Link to this definition"></a></dt>
-<dd><p>List comments created in date range.</p>
+<dd><p>List comments created in a date range.</p>
 <dl>
-<dt>Args:</dt><dd><p>start_date (datetime): The start date of the range.
-end_date (datetime): The end date of the range.</p>
+<dt>Args:</dt><dd><p>start_date (datetime): The start date (inclusive) of the range.
+end_date (datetime): The end date (inclusive) of the range.</p>
 </dd>
 <dt>Returns:</dt><dd><p>List[Comment]: A list of Comment instances created within the given date range.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">UTC</span>
 
-<span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">)</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">UTC</span><span class="p">)</span>
 <span class="n">comments</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">list_comments_created_in_date_range</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -596,9 +579,12 @@ end_date (datetime): The end date of the range.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.CommentManager.search_comments">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_comments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Comments.CommentManager.search_comments" title="Link to this definition"></a></dt>
-<dd><p>Search comments by text content.</p>
+<dd><p>Search comments by text content using a LIKE query.</p>
 <dl>
-<dt>Args:</dt><dd><p>query (str): The search query.</p>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>query (str): The search query string. The search will look for</dt><dd><p>comments where the <cite>text_field</cite> contains this string.</p>
+</dd>
+</dl>
 </dd>
 <dt>Returns:</dt><dd><p>List[Comment]: A list of Comment instances matching the search query.</p>
 </dd>
@@ -618,12 +604,15 @@ end_date (datetime): The end date of the range.</p>
 <dl>
 <dt>Args:</dt><dd><p>comment_id (int): The ID of the Comment to update.
 data (Dict[str, Any]): A dictionary containing the data to update.</p>
+<blockquote>
+<div><p>Keys should match Comment model field names (e.g., ‘text_field’).</p>
+</div></blockquote>
 </dd>
 <dt>Returns:</dt><dd><p>Optional[Comment]: The updated Comment instance if found, otherwise None.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
-<span class="n">updated_comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_comment</span><span class="p">(</span><span class="n">comment_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated comment text.&quot;</span><span class="p">})</span>
+<span class="n">updated_comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_comment</span><span class="p">(</span><span class="n">comment_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated comment text.&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 </dd>
@@ -636,7 +625,7 @@ data (Dict[str, Any]): A dictionary containing the data to update.</p>
 <section id="module-litepolis_database_default.Conversations">
 <span id="conversations-module"></span><h2>Conversations module<a class="headerlink" href="#module-litepolis_database_default.Conversations" title="Link to this heading"></a></h2>
 <p>This module defines the Conversation model and ConversationManager class for interacting with the ‘conversations’ table in the database.</p>
-<p>The ‘conversations’ table stores information about conversations, including their title, description, and archive status.
+<p>The ‘conversations’ table stores information about conversations, including their title, description, archive status, and the user who created them.
 It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id4">
 <caption><span class="caption-text">Table Schema</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
@@ -651,23 +640,27 @@ It also includes timestamps for creation and modification.</p>
 <td><p>INTEGER</p></td>
 <td><p>Unique identifier for the conversation.</p></td>
 </tr>
-<tr class="row-odd"><td><p>title</p></td>
+<tr class="row-odd"><td><p>user_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key referencing the user who created the conversation.</p></td>
+</tr>
+<tr class="row-even"><td><p>title</p></td>
 <td><p>VARCHAR</p></td>
 <td><p>Title of the conversation.</p></td>
 </tr>
-<tr class="row-even"><td><p>description</p></td>
+<tr class="row-odd"><td><p>description</p></td>
 <td><p>VARCHAR</p></td>
 <td><p>Description of the conversation.</p></td>
 </tr>
-<tr class="row-odd"><td><p>is_archived</p></td>
+<tr class="row-even"><td><p>is_archived</p></td>
 <td><p>BOOLEAN</p></td>
 <td><p>Indicates whether the conversation is archived.</p></td>
 </tr>
-<tr class="row-even"><td><p>created</p></td>
+<tr class="row-odd"><td><p>created</p></td>
 <td><p>DATETIME</p></td>
 <td><p>Timestamp indicating when the conversation was created.</p></td>
 </tr>
-<tr class="row-odd"><td><p>modified</p></td>
+<tr class="row-even"><td><p>modified</p></td>
 <td><p>DATETIME</p></td>
 <td><p>Timestamp indicating when the conversation was last modified.</p></td>
 </tr>
@@ -676,53 +669,30 @@ It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id5">
 <caption><span class="caption-text">Relationships</span><a class="headerlink" href="#id5" title="Link to this table"></a></caption>
 <tbody>
-<tr class="row-odd"><td><p>Comment</p></td>
-<td><p>One-to-many.</p></td>
+<tr class="row-odd"><td><p>comments</p></td>
+<td><p>One-to-many relationship with the Comment model.</p></td>
+</tr>
+<tr class="row-even"><td><p>user</p></td>
+<td><p>Many-to-one relationship with the User model.</p></td>
 </tr>
 </tbody>
 </table>
 <p>The ConversationManager class provides static methods for performing CRUD (Create, Read, Update, Delete) operations
-on the ‘conversations’ table.</p>
+on the ‘conversations’ table, as well as methods for listing, searching, counting, and archiving conversations.</p>
 <p>To use the methods in this module, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
 <span class="n">conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">({</span>
     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Conversation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A new conversation about a topic.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">})</span>
 </pre></div>
 </div>
 <dl class="py class">
-<dt class="sig sig-object py" id="litepolis_database_default.Conversations.BaseModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Conversations.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Conversations.BaseModel" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Conversations.BaseModel.created">
-<span class="sig-name descname"><span class="pre">created</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.BaseModel.created" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Conversations.BaseModel.id">
-<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.BaseModel.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Conversations.BaseModel.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'registry':</span> <span class="pre">PydanticUndefined}</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.BaseModel.model_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Conversations.BaseModel.modified">
-<span class="sig-name descname"><span class="pre">modified</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.BaseModel.modified" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Conversations.</span></span><span class="sig-name descname"><span class="pre">Conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_archived:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#litepolis_database_default.Conversations.BaseModel" title="litepolis_database_default.Conversations.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Conversations.</span></span><span class="sig-name descname"><span class="pre">Conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_archived:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation.comments">
 <span class="sig-name descname"><span class="pre">comments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation.comments" title="Link to this definition"></a></dt>
@@ -764,6 +734,16 @@ on the ‘conversations’ table.</p>
 <span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation.title" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation.user">
+<span class="sig-name descname"><span class="pre">user</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation.user" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation.user_id">
+<span class="sig-name descname"><span class="pre">user_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation.user_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -774,6 +754,7 @@ on the ‘conversations’ table.</p>
 <dt class="sig sig-object py" id="litepolis_database_default.Conversations.ConversationManager.archive_conversation">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">archive_conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conversation_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation" title="litepolis_database_default.Conversations.Conversation"><span class="pre">Conversation</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.Conversations.ConversationManager.archive_conversation" title="Link to this definition"></a></dt>
 <dd><p>Archives a conversation.</p>
+<p>Sets the ‘is_archived’ field to True for the specified conversation.</p>
 <dl>
 <dt>Args:</dt><dd><p>conversation_id (int): The ID of the Conversation to archive.</p>
 </dd>
@@ -809,7 +790,11 @@ on the ‘conversations’ table.</p>
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation" title="litepolis_database_default.Conversations.Conversation"><span class="pre">Conversation</span></a></span></span><a class="headerlink" href="#litepolis_database_default.Conversations.ConversationManager.create_conversation" title="Link to this definition"></a></dt>
 <dd><p>Creates a new Conversation record.</p>
 <dl>
-<dt>Args:</dt><dd><p>data (Dict[str, Any]): A dictionary containing the data for the new Conversation.</p>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data (Dict[str, Any]): A dictionary containing the data for the new Conversation.</dt><dd><p>Expected keys include ‘title’ (required), ‘description’ (optional),
+‘is_archived’ (optional, defaults to False), and ‘user_id’ (optional).</p>
+</dd>
+</dl>
 </dd>
 <dt>Returns:</dt><dd><p>Conversation: The newly created Conversation instance.</p>
 </dd>
@@ -818,6 +803,7 @@ on the ‘conversations’ table.</p>
 <span class="n">conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">({</span>
     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Conversation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A new conversation about a topic.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">})</span>
 </pre></div>
 </div>
@@ -962,17 +948,12 @@ data (Dict[str, Any]): A dictionary containing the data to update.</p>
 </dd></dl>
 
 </section>
-<section id="migrationrecord-module">
-<h2>MigrationRecord module<a class="headerlink" href="#migrationrecord-module" title="Link to this heading"></a></h2>
-</section>
-<section id="report-module">
-<h2>Report module<a class="headerlink" href="#report-module" title="Link to this heading"></a></h2>
-</section>
 <section id="module-litepolis_database_default.Users">
 <span id="users-module"></span><h2>Users module<a class="headerlink" href="#module-litepolis_database_default.Users" title="Link to this heading"></a></h2>
 <p>This module defines the User model and UserManager class for interacting with the ‘users’ table in the database.</p>
 <p>The ‘users’ table stores information about users, including their email, authentication token, and admin status.
-It also includes timestamps for creation and modification.</p>
+It also includes timestamps for creation and modification. The table supports both standard SQL databases and StarRocks,
+with some specific handling for StarRocks (e.g., unique constraints and primary keys).</p>
 <table class="docutils align-default" id="id6">
 <caption><span class="caption-text">Table Schema</span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
 <thead>
@@ -1011,19 +992,19 @@ It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id7">
 <caption><span class="caption-text">Relationships</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
 <tbody>
-<tr class="row-odd"><td><p>Report</p></td>
+<tr class="row-odd"><td><p>Comment</p></td>
 <td><p>One-to-many.</p></td>
 </tr>
-<tr class="row-even"><td><p>Comment</p></td>
+<tr class="row-even"><td><p>Vote</p></td>
 <td><p>One-to-many.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Vote</p></td>
+<tr class="row-odd"><td><p>Conversation</p></td>
 <td><p>One-to-many.</p></td>
 </tr>
 </tbody>
 </table>
-<p>The UserManager class provides static methods for performing CRUD (Create, Read, Update, Delete) operations
-on the ‘users’ table.</p>
+<p>The UserManager class provides static methods for interacting with the ‘users’ table, including CRUD operations,
+searching, listing with pagination, and counting.</p>
 <p>To use the methods in this module, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1034,36 +1015,9 @@ on the ‘users’ table.</p>
 </pre></div>
 </div>
 <dl class="py class">
-<dt class="sig sig-object py" id="litepolis_database_default.Users.BaseModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Users.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Users.BaseModel" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Users.BaseModel.created">
-<span class="sig-name descname"><span class="pre">created</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Users.BaseModel.created" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Users.BaseModel.id">
-<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#litepolis_database_default.Users.BaseModel.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Users.BaseModel.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'registry':</span> <span class="pre">PydanticUndefined}</span></em><a class="headerlink" href="#litepolis_database_default.Users.BaseModel.model_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Users.BaseModel.modified">
-<span class="sig-name descname"><span class="pre">modified</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Users.BaseModel.modified" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.User">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Users.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_token:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_admin:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Users.User" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#litepolis_database_default.Users.BaseModel" title="litepolis_database_default.Users.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Users.</span></span><span class="sig-name descname"><span class="pre">User</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_token:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_admin:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Users.User" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.User.auth_token">
 <span class="sig-name descname"><span class="pre">auth_token</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#litepolis_database_default.Users.User.auth_token" title="Link to this definition"></a></dt>
@@ -1072,6 +1026,11 @@ on the ‘users’ table.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.User.comments">
 <span class="sig-name descname"><span class="pre">comments</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Users.User.comments" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="litepolis_database_default.Users.User.conversation">
+<span class="sig-name descname"><span class="pre">conversation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation" title="litepolis_database_default.Conversations.Conversation"><span class="pre">Conversation</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Users.User.conversation" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1106,11 +1065,6 @@ on the ‘users’ table.</p>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Users.User.reports">
-<span class="sig-name descname"><span class="pre">reports</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Report</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Users.User.reports" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.User.votes">
 <span class="sig-name descname"><span class="pre">votes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Vote.Vote" title="litepolis_database_default.Vote.Vote"><span class="pre">Vote</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Users.User.votes" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -1124,7 +1078,11 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.count_users">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">count_users</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.count_users" title="Link to this definition"></a></dt>
-<dd><p>Counts all User records.</p>
+<dd><p>Counts the total number of User records in the database.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>The total count of users.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <blockquote>
 <div><p>from litepolis_database_default import DatabaseActor</p>
@@ -1134,8 +1092,15 @@ on the ‘users’ table.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.create_user">
-<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.create_user" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.create_user" title="Link to this definition"></a></dt>
 <dd><p>Creates a new User record.</p>
+<p>Handles checking for existing email before creation, especially for StarRocks.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>data: A dictionary containing user data (e.g., “email”, “auth_token”).</p>
+</dd>
+<dt>Returns:</dt><dd><p>The created User object, or None if a user with the same email already exists.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1150,7 +1115,13 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.delete_user">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.delete_user" title="Link to this definition"></a></dt>
-<dd><p>Deletes a User record by ID. Returns True if successful.</p>
+<dd><p>Deletes a User record by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The unique identifier of the user to delete.</p>
+</dd>
+<dt>Returns:</dt><dd><p>True if the user was found and deleted, False otherwise.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1163,6 +1134,13 @@ on the ‘users’ table.</p>
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.list_users">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_users</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.list_users" title="Link to this definition"></a></dt>
 <dd><p>Lists User records with pagination.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>page: The page number (1-based). Defaults to 1.
+page_size: The number of records per page. Defaults to 10.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of User objects for the specified page.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1174,7 +1152,13 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.list_users_by_admin_status">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_users_by_admin_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_admin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.list_users_by_admin_status" title="Link to this definition"></a></dt>
-<dd><p>List users by admin status.</p>
+<dd><p>Lists users based on their admin status.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>is_admin: A boolean indicating whether to list administrators (True) or non-administrators (False).</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of User objects matching the specified admin status.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1186,7 +1170,14 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.list_users_created_in_date_range">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_users_created_in_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.list_users_created_in_date_range" title="Link to this definition"></a></dt>
-<dd><p>List users created in a date range.</p>
+<dd><p>Lists users created within a specified date range (inclusive).</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>start_date: The start of the date range.
+end_date: The end of the date range.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of User objects created within the specified range.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1199,6 +1190,12 @@ on the ‘users’ table.</p>
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.read_user">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.read_user" title="Link to this definition"></a></dt>
 <dd><p>Reads a User record by ID.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The unique identifier of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The User object if found, otherwise None.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1210,7 +1207,13 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.read_user_by_email">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_user_by_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.read_user_by_email" title="Link to this definition"></a></dt>
-<dd><p>Reads a User record by email.</p>
+<dd><p>Reads a User record by email address.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>email: The email address of the user.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The User object if found, otherwise None.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1222,7 +1225,13 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.search_users_by_email">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">search_users_by_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.search_users_by_email" title="Link to this definition"></a></dt>
-<dd><p>Search users by email.</p>
+<dd><p>Searches for users whose email address contains the specified query string.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>query: The string to search for within email addresses.</p>
+</dd>
+<dt>Returns:</dt><dd><p>A list of User objects matching the search query.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1234,7 +1243,14 @@ on the ‘users’ table.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="litepolis_database_default.Users.UserManager.update_user">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">update_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Users.User" title="litepolis_database_default.Users.User"><span class="pre">User</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.Users.UserManager.update_user" title="Link to this definition"></a></dt>
-<dd><p>Updates a User record by ID.</p>
+<dd><p>Updates a User record by ID with the provided data.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>user_id: The unique identifier of the user to update.
+data: A dictionary containing the fields and new values to update.</p>
+</dd>
+<dt>Returns:</dt><dd><p>The updated User object if found and updated, otherwise None.</p>
+</dd>
+</dl>
 <p>To use this method, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1308,13 +1324,10 @@ about individual votes, including the voter, target comment, and vote value.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>BaseModel</p></td>
-<td><p>Base class for all database models, providing common fields like <cite>id</cite>, <cite>created</cite>, and <cite>modified</cite>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Vote</p></td>
+<tr class="row-even"><td><p>Vote</p></td>
 <td><p>SQLModel class representing the <cite>votes</cite> table.</p></td>
 </tr>
-<tr class="row-even"><td><p>VoteManager</p></td>
+<tr class="row-odd"><td><p>VoteManager</p></td>
 <td><p>Provides static methods for managing votes.</p></td>
 </tr>
 </tbody>
@@ -1331,36 +1344,9 @@ about individual votes, including the voter, target comment, and vote value.</p>
 </pre></div>
 </div>
 <dl class="py class">
-<dt class="sig sig-object py" id="litepolis_database_default.Vote.BaseModel">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Vote.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Vote.BaseModel" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Vote.BaseModel.created">
-<span class="sig-name descname"><span class="pre">created</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Vote.BaseModel.created" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Vote.BaseModel.id">
-<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#litepolis_database_default.Vote.BaseModel.id" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Vote.BaseModel.model_config">
-<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'registry':</span> <span class="pre">PydanticUndefined}</span></em><a class="headerlink" href="#litepolis_database_default.Vote.BaseModel.model_config" title="Link to this definition"></a></dt>
-<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="litepolis_database_default.Vote.BaseModel.modified">
-<span class="sig-name descname"><span class="pre">modified</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Vote.BaseModel.modified" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="litepolis_database_default.Vote.Vote">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Vote.</span></span><span class="sig-name descname"><span class="pre">Vote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Vote.Vote" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#litepolis_database_default.Vote.BaseModel" title="litepolis_database_default.Vote.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Vote.</span></span><span class="sig-name descname"><span class="pre">Vote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comment_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Vote.Vote" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Vote.Vote.comment">
 <span class="sig-name descname"><span class="pre">comment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Mapped</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Comments.Comment" title="litepolis_database_default.Comments.Comment"><span class="pre">Comment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Vote.Vote.comment" title="Link to this definition"></a></dt>
@@ -1420,7 +1406,7 @@ about individual votes, including the voter, target comment, and vote value.</p>
 <dl>
 <dt>Args:</dt><dd><p>comment_id (int): The ID of the comment.</p>
 </dd>
-<dt>Returns:</dt><dd><p>int: The number of votes for the comment.</p>
+<dt>Returns:</dt><dd><p>int: The number of votes for the comment. Returns 0 if no votes are found for the comment.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1436,7 +1422,14 @@ about individual votes, including the voter, target comment, and vote value.</p>
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_vote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#litepolis_database_default.Vote.Vote" title="litepolis_database_default.Vote.Vote"><span class="pre">Vote</span></a></span></span><a class="headerlink" href="#litepolis_database_default.Vote.VoteManager.create_vote" title="Link to this definition"></a></dt>
 <dd><p>Creates a new Vote record.</p>
 <dl>
-<dt>Args:</dt><dd><p>data (Dict[str, Any]): A dictionary containing the data for the new Vote.</p>
+<dt>Note:</dt><dd><p>This operation may raise exceptions (e.g., <cite>IntegrityError</cite>) if:
+- A vote already exists for the given <cite>user_id</cite> and <cite>comment_id</cite> (due to unique constraint).
+- The <cite>user_id</cite> or <cite>comment_id</cite> do not reference existing records in the <cite>users</cite> or <cite>comments</cite> tables (due to foreign key constraints).</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>data (Dict[str, Any]): A dictionary containing the data for the new Vote.</dt><dd><p>Must include ‘value’, ‘user_id’, and ‘comment_id’.</p>
+</dd>
+</dl>
 </dd>
 <dt>Returns:</dt><dd><p>Vote: The newly created Vote instance.</p>
 </dd>
@@ -1460,7 +1453,10 @@ about individual votes, including the voter, target comment, and vote value.</p>
 <dl>
 <dt>Args:</dt><dd><p>vote_id (int): The ID of the Vote to delete.</p>
 </dd>
-<dt>Returns:</dt><dd><p>bool: True if the Vote was successfully deleted, False otherwise.</p>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>bool: True if the Vote was successfully deleted, False otherwise.</dt><dd><p>Returns False if the vote with the given ID does not exist.</p>
+</dd>
+</dl>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1497,7 +1493,10 @@ comment_id (int): The ID of the comment.</p>
 <dl>
 <dt>Args:</dt><dd><p>comment_id (int): The ID of the comment.</p>
 </dd>
-<dt>Returns:</dt><dd><p>Dict[int, int]: A dictionary where the keys are vote values and the values are the counts.</p>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Dict[int, int]: A dictionary where the keys are vote values and the values are the counts.</dt><dd><p>Returns an empty dictionary if no votes are found for the comment.</p>
+</dd>
+</dl>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1516,10 +1515,13 @@ comment_id (int): The ID of the comment.</p>
 <dt>Args:</dt><dd><p>comment_id (int): The ID of the comment.
 page (int): The page number to retrieve (default: 1).
 page_size (int): The number of votes per page (default: 10).
-order_by (str): The field to order the votes by (default: “created”).
-order_direction (str): The direction to order the votes (“asc” or “desc”, default: “asc”).</p>
+order_by (str): The field to order the votes by (default: “created”).</p>
+<blockquote>
+<div><p>Must be a valid attribute name of the Vote model.</p>
+</div></blockquote>
+<p>order_direction (str): The direction to order the votes (“asc” or “desc”, default: “asc”).</p>
 </dd>
-<dt>Returns:</dt><dd><p>List[Vote]: A list of Vote instances.</p>
+<dt>Returns:</dt><dd><p>List[Vote]: A list of Vote instances. Returns an empty list if no votes are found for the comment or page.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1539,7 +1541,7 @@ order_direction (str): The direction to order the votes (“asc” or “desc”
 page (int): The page number to retrieve (default: 1).
 page_size (int): The number of votes per page (default: 10).</p>
 </dd>
-<dt>Returns:</dt><dd><p>List[Vote]: A list of Vote instances.</p>
+<dt>Returns:</dt><dd><p>List[Vote]: A list of Vote instances. Returns an empty list if no votes are found for the user or page.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1555,10 +1557,10 @@ page_size (int): The number of votes per page (default: 10).</p>
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_votes_created_in_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#litepolis_database_default.Vote.Vote" title="litepolis_database_default.Vote.Vote"><span class="pre">Vote</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#litepolis_database_default.Vote.VoteManager.list_votes_created_in_date_range" title="Link to this definition"></a></dt>
 <dd><p>List votes created in date range.</p>
 <dl>
-<dt>Args:</dt><dd><p>start_date (datetime): The start date of the range.
-end_date (datetime): The end date of the range.</p>
+<dt>Args:</dt><dd><p>start_date (datetime): The start date of the range (inclusive).
+end_date (datetime): The end date of the range (inclusive).</p>
 </dd>
-<dt>Returns:</dt><dd><p>List[Vote]: A list of Vote instances.</p>
+<dt>Returns:</dt><dd><p>List[Vote]: A list of Vote instances. Returns an empty list if no votes are found in the range.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
@@ -1597,8 +1599,14 @@ end_date (datetime): The end date of the range.</p>
 <dl>
 <dt>Args:</dt><dd><p>vote_id (int): The ID of the Vote to update.
 data (Dict[str, Any]): A dictionary containing the data to update.</p>
+<blockquote>
+<div><p>Keys should match Vote model attributes.</p>
+</div></blockquote>
 </dd>
-<dt>Returns:</dt><dd><p>Optional[Vote]: The updated Vote instance if found, otherwise None.</p>
+<dt>Returns:</dt><dd><dl class="simple">
+<dt>Optional[Vote]: The updated Vote instance if found, otherwise None.</dt><dd><p>Returns None if the vote with the given ID does not exist.</p>
+</dd>
+</dl>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -1620,18 +1628,63 @@ data (Dict[str, Any]): A dictionary containing the data to update.</p>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="litepolis_database_default.utils.create_db_and_tables">
-<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils.</span></span><span class="sig-name descname"><span class="pre">create_db_and_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils.create_db_and_tables" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="litepolis_database_default.utils.get_session">
 <span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils.</span></span><span class="sig-name descname"><span class="pre">get_session</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils.get_session" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils.is_starrocks_engine">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils.</span></span><span class="sig-name descname"><span class="pre">is_starrocks_engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine=Engine(starrocks://litepolis:***&#64;localhost:9030/litepolis_default)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#litepolis_database_default.utils.is_starrocks_engine" title="Link to this definition"></a></dt>
+<dd><p>Determine if the engine is connected to StarRocks</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils.wait_for_alter_completion">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils.</span></span><span class="sig-name descname"><span class="pre">wait_for_alter_completion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils.wait_for_alter_completion" title="Link to this definition"></a></dt>
+<dd><p>Wait for the latest ongoing schema change for a specific table to complete
+using ‘ORDER BY CreateTime DESC LIMIT 1’.</p>
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-litepolis_database_default.utils_StarRocks">
+<span id="utils-starrocks-module"></span><h2>utils_StarRocks module<a class="headerlink" href="#module-litepolis_database_default.utils_StarRocks" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils_StarRocks.create_db_and_tables">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils_StarRocks.</span></span><span class="sig-name descname"><span class="pre">create_db_and_tables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils_StarRocks.create_db_and_tables" title="Link to this definition"></a></dt>
+<dd><p>Creates all tables, using standard or custom DDL based on dialect.
+Relies on models being imported beforehand.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils_StarRocks.generate_custom_ddl_for_table">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils_StarRocks.</span></span><span class="sig-name descname"><span class="pre">generate_custom_ddl_for_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dialect</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dialect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils_StarRocks.generate_custom_ddl_for_table" title="Link to this definition"></a></dt>
+<dd><p>Generates the specific DDL for one table using hints and the provided dialect.
+Handles column order and key placement.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils_StarRocks.get_hints_for_table">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils_StarRocks.</span></span><span class="sig-name descname"><span class="pre">get_hints_for_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#litepolis_database_default.utils_StarRocks.get_hints_for_table" title="Link to this definition"></a></dt>
+<dd><p>Retrieves hints from the registry based on table name.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils_StarRocks.populate_registry">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils_StarRocks.</span></span><span class="sig-name descname"><span class="pre">populate_registry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metadata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MetaData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils_StarRocks.populate_registry" title="Link to this definition"></a></dt>
+<dd><p>Populates the _MODEL_REGISTRY using table names from metadata
+after all decorated models are imported and defined.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="litepolis_database_default.utils_StarRocks.register_table">
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils_StarRocks.</span></span><span class="sig-name descname"><span class="pre">register_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distributed_by</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.utils_StarRocks.register_table" title="Link to this definition"></a></dt>
+<dd><p>Decorator to register a SQLModel class and its special DDL hints
+for custom DDL generation.</p>
+</dd></dl>
+
+</section>
+<section id="module-litepolis_database_default">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-litepolis_database_default" title="Link to this heading"></a></h2>
 </section>
 </section>
 

@@ -1,7 +1,7 @@
 """
 This module defines the Conversation model and ConversationManager class for interacting with the 'conversations' table in the database.
 
-The 'conversations' table stores information about conversations, including their title, description, and archive status.
+The 'conversations' table stores information about conversations, including their title, description, archive status, and the user who created them.
 It also includes timestamps for creation and modification.
 
 .. list-table:: Table Schema
@@ -13,6 +13,9 @@ It also includes timestamps for creation and modification.
    * - id
      - INTEGER
      - Unique identifier for the conversation.
+   * - user_id
+     - INTEGER
+     - Foreign key referencing the user who created the conversation.
    * - title
      - VARCHAR
      - Title of the conversation.
@@ -31,11 +34,13 @@ It also includes timestamps for creation and modification.
 
 .. list-table:: Relationships
 
-    * - Comment
-      - One-to-many.
+    * - comments
+      - One-to-many relationship with the Comment model.
+    * - user
+      - Many-to-one relationship with the User model.
 
 The ConversationManager class provides static methods for performing CRUD (Create, Read, Update, Delete) operations
-on the 'conversations' table.
+on the 'conversations' table, as well as methods for listing, searching, counting, and archiving conversations.
 
 To use the methods in this module, import DatabaseActor.  For example::
 
@@ -44,23 +49,23 @@ To use the methods in this module, import DatabaseActor.  For example::
     conversation = DatabaseActor.create_conversation({
         "title": "New Conversation",
         "description": "A new conversation about a topic.",
+        "user_id": 1
     })
 """
 
 
+from sqlalchemy import func, DDL, text
 from sqlmodel import SQLModel, Field, Relationship, Column, Index
-from sqlmodel import select
+from sqlmodel import select, DateTime
 from typing import Optional, List, Type, Any, Dict, Generator
 from datetime import datetime, UTC
 
-from .utils import get_session 
+from .utils import get_session, is_starrocks_engine
 
-class BaseModel(SQLModel):
-    id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from .utils_StarRocks import register_table
 
-class Conversation(BaseModel, table=True):
+@register_table(distributed_by="HASH(id)")
+class Conversation(SQLModel, table=True):
     __tablename__ = "conversations"
     __table_args__ = (
         Index("ix_conversation_created", "created"),
@@ -68,6 +73,7 @@ class Conversation(BaseModel, table=True):
     )
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     title: str = Field(nullable=False)
     description: Optional[str] = None
     is_archived: bool = Field(default=False)
@@ -75,6 +81,10 @@ class Conversation(BaseModel, table=True):
     modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     comments: List["Comment"] = Relationship(back_populates="conversation")
+    user: Optional["User"] = Relationship(back_populates="conversation",
+                                          sa_relationship_kwargs={
+                                            "foreign_keys": "Conversation.user_id"})
+
 
 class ConversationManager:
     @staticmethod
@@ -83,6 +93,8 @@ class ConversationManager:
 
         Args:
             data (Dict[str, Any]): A dictionary containing the data for the new Conversation.
+                                  Expected keys include 'title' (required), 'description' (optional),
+                                  'is_archived' (optional, defaults to False), and 'user_id' (optional).
 
         Returns:
             Conversation: The newly created Conversation instance.
@@ -95,12 +107,24 @@ class ConversationManager:
                 conversation = DatabaseActor.create_conversation({
                     "title": "New Conversation",
                     "description": "A new conversation about a topic.",
+                    "user_id": 1
                 })
         """
         with get_session() as session:
             conversation_instance = Conversation(**data)
             session.add(conversation_instance)
             session.commit()
+            if is_starrocks_engine():
+                # StarRocks doesn't support RETURNING, so we fetch the created object
+                # based on unique fields. This assumes user_id, title, and description
+                # are sufficiently unique for recent inserts.
+                return session.exec(
+                    select(Conversation).where(
+                        Conversation.user_id == data.get("user_id"),
+                        Conversation.title == data["title"],
+                        Conversation.description == data.get("description")
+                    ).order_by(Conversation.created.desc()).limit(1) # Order by created desc to get the most recent match
+                ).first()
             session.refresh(conversation_instance)
             return conversation_instance
 
@@ -189,6 +213,15 @@ class ConversationManager:
                 setattr(conversation_instance, key, value)
             session.add(conversation_instance)
             session.commit()
+            if is_starrocks_engine():
+                # StarRocks doesn't support RETURNING, so we fetch the created object
+                # based on unique fields. This assumes user_id, title, and description
+                # are sufficiently unique for recent inserts.
+                return session.exec(
+                    select(Conversation).where(
+                        Conversation.id == conversation_id
+                    ).order_by(Conversation.created.desc()).limit(1)
+                ).first()
             session.refresh(conversation_instance)
             return conversation_instance
 
@@ -216,7 +249,7 @@ class ConversationManager:
             session.delete(conversation_instance)
             session.commit()
             return True
-            
+
     @staticmethod
     def search_conversations(query: str) -> List[Conversation]:
         """Search conversations by title or description.
@@ -241,7 +274,7 @@ class ConversationManager:
                     Conversation.title.like(search_term) | Conversation.description.like(search_term)
                 )
             ).all()
-            
+
     @staticmethod
     def list_conversations_by_archived_status(is_archived: bool) -> List[Conversation]:
         """List conversations by archive status.
@@ -263,7 +296,7 @@ class ConversationManager:
             return session.exec(
                 select(Conversation).where(Conversation.is_archived == is_archived)
             ).all()
-            
+
     @staticmethod
     def list_conversations_created_in_date_range(start_date: datetime, end_date: datetime) -> List[Conversation]:
         """List conversations created in date range.
@@ -314,6 +347,8 @@ class ConversationManager:
     def archive_conversation(conversation_id: int) -> Optional[Conversation]:
         """Archives a conversation.
 
+        Sets the 'is_archived' field to True for the specified conversation.
+
         Args:
             conversation_id (int): The ID of the Conversation to archive.
 
@@ -334,5 +369,14 @@ class ConversationManager:
             conversation_instance.is_archived = True
             session.add(conversation_instance)
             session.commit()
+            if is_starrocks_engine():
+                # StarRocks doesn't support RETURNING, so we fetch the created object
+                # based on unique fields. This assumes user_id, title, and description
+                # are sufficiently unique for recent inserts.
+                return session.exec(
+                    select(Conversation).where(
+                        Conversation.id == conversation_id
+                    ).order_by(Conversation.created.desc()).limit(1)
+                ).first()
             session.refresh(conversation_instance)
             return conversation_instance
