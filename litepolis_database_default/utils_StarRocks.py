@@ -13,6 +13,7 @@ import importlib
 import pkgutil
 from pathlib import Path
 import traceback # For better error printing
+import time # Import the time module
 
 from .utils import engine, is_starrocks_engine, wait_for_alter_completion
 
@@ -213,6 +214,7 @@ def generate_custom_ddl_for_table(table: sqlalchemy.Table, hints: Dict[str, Any]
     # --- Assemble CREATE TABLE block ---
     ddl_parts.append(f"CREATE TABLE IF NOT EXISTS `{table_name}` (")
     if column_ddl_lines: ddl_parts.append(",\n".join(column_ddl_lines))
+
     ddl_parts.append(")")
 
     # --- Append KEY clause ---
@@ -317,8 +319,11 @@ def create_db_and_tables():
                             print(f"Executing statement {i+1}/{len(ddl_statements)} for table {sorted_tables[i].name}...")
                             # print(f"SQL:\n{stmt}\n") # Uncomment to print SQL before execution
                             connection.execute(sqlalchemy.text(stmt))
-                            # Call wait function ONLY IF needed and defined correctly
+                            # Call wait function
                             wait_for_alter_completion(connection, sorted_tables[i].name)
+                            # Add explicit sleep to allow metadata propagation
+                            print(f"  Sleeping for 2 seconds after creating {sorted_tables[i].name}...")
+                            time.sleep(2)
                         # Only commit once after all statements if not using autocommit
                         if not connection.dialect.supports_statement_cache: # Heuristic for needing commit
                             connection.commit()

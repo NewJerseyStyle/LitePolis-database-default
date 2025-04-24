@@ -96,7 +96,8 @@ providing a unified interface for database interactions.</p>
 </table>
 <p id="module-litepolis_database_default.Users">This module defines the User model and UserManager class for interacting with the ‘users’ table in the database.</p>
 <p>The ‘users’ table stores information about users, including their email, authentication token, and admin status.
-It also includes timestamps for creation and modification.</p>
+It also includes timestamps for creation and modification. The table supports both standard SQL databases and StarRocks,
+with some specific handling for StarRocks (e.g., unique constraints and primary keys).</p>
 <table class="docutils align-default" id="id1">
 <caption><span class="caption-text">Table Schema</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
 <thead>
@@ -135,19 +136,19 @@ It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id2">
 <caption><span class="caption-text">Relationships</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
 <tbody>
-<tr class="row-odd"><td><p>Report</p></td>
+<tr class="row-odd"><td><p>Comment</p></td>
 <td><p>One-to-many.</p></td>
 </tr>
-<tr class="row-even"><td><p>Comment</p></td>
+<tr class="row-even"><td><p>Vote</p></td>
 <td><p>One-to-many.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Vote</p></td>
+<tr class="row-odd"><td><p>Conversation</p></td>
 <td><p>One-to-many.</p></td>
 </tr>
 </tbody>
 </table>
-<p>The UserManager class provides static methods for performing CRUD (Create, Read, Update, Delete) operations
-on the ‘users’ table.</p>
+<p>The UserManager class provides static methods for interacting with the ‘users’ table, including CRUD operations,
+searching, listing with pagination, and counting.</p>
 <p>To use the methods in this module, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
@@ -198,13 +199,15 @@ on the ‘users’ table.</p>
 <section id="module-litepolis_database_default.Comments">
 <span id="comments-table"></span><h2>Comments Table<a class="headerlink" href="#module-litepolis_database_default.Comments" title="Link to this heading"></a></h2>
 <p>This module defines the database schema for comments, including the <cite>Comment</cite> model
-and related functionalities for managing comments.</p>
-<p>The database schema includes tables for users, conversations, comments, and votes,
-with relationships defined between them. The <cite>Comment</cite> table stores information
-about individual comments, including the text, user, conversation, parent comment,
-and votes.</p>
-<p>The <cite>CommentManager</cite> class provides methods for creating, reading, updating, and
-deleting comments.</p>
+and the <cite>CommentManager</cite> class for managing comment data.</p>
+<p>The <cite>Comment</cite> model represents the <cite>comments</cite> table and includes fields for
+the comment’s content (<cite>text_field</cite>), timestamps (<cite>created</cite>, <cite>modified</cite>),
+and foreign keys linking to the user (<cite>user_id</cite>), conversation (<cite>conversation_id</cite>),
+and parent comment (<cite>parent_comment_id</cite>). It also defines relationships to
+related <cite>User</cite>, <cite>Conversation</cite>, <cite>Vote</cite>, and other <cite>Comment</cite> instances (for replies).</p>
+<p>The <cite>CommentManager</cite> class provides static methods for common database operations
+on comments, such as creating, reading, updating, deleting, listing by various
+criteria (conversation, user, date range), searching, and counting.</p>
 <table class="docutils align-default" id="id3">
 <caption><span class="caption-text">Table Schemas</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
 <thead>
@@ -220,7 +223,10 @@ deleting comments.</p>
 <td><p>Stores conversation information (id, title, etc.).</p></td>
 </tr>
 <tr class="row-even"><td><p>comments</p></td>
-<td><p>Stores comment information (id, text, user_id, conversation_id, parent_comment_id, created, modified).</p></td>
+<td><p>Stores comment information (id, text_field, user_id, conversation_id, parent_comment_id, created, modified).</p></td>
+</tr>
+<tr class="row-odd"><td><p>votes</p></td>
+<td><p>Stores vote information (id, user_id, comment_id, value).</p></td>
 </tr>
 </tbody>
 </table>
@@ -235,7 +241,7 @@ deleting comments.</p>
 <tr class="row-even"><td><p>id (int)</p></td>
 <td><p>Primary key for the comment.</p></td>
 </tr>
-<tr class="row-odd"><td><p>text (str)</p></td>
+<tr class="row-odd"><td><p>text_field (str)</p></td>
 <td><p>The content of the comment.</p></td>
 </tr>
 <tr class="row-even"><td><p>user_id (int, optional)</p></td>
@@ -253,8 +259,20 @@ deleting comments.</p>
 <tr class="row-even"><td><p>modified (datetime)</p></td>
 <td><p>Timestamp of when the comment was last modified.</p></td>
 </tr>
-<tr class="row-odd"><td><p>votes</p></td>
-<td><p>Stores vote information (id, user_id, comment_id, value).</p></td>
+<tr class="row-odd"><td><p>user (Relationship)</p></td>
+<td><p>Relationship to the User who created the comment.</p></td>
+</tr>
+<tr class="row-even"><td><p>conversation (Relationship)</p></td>
+<td><p>Relationship to the Conversation the comment belongs to.</p></td>
+</tr>
+<tr class="row-odd"><td><p>votes (Relationship)</p></td>
+<td><p>Relationship to the Votes associated with this comment.</p></td>
+</tr>
+<tr class="row-even"><td><p>replies (Relationship)</p></td>
+<td><p>Relationship to other Comments that are replies to this comment.</p></td>
+</tr>
+<tr class="row-odd"><td><p>parent_comment (Relationship)</p></td>
+<td><p>Relationship to the parent Comment if this is a reply.</p></td>
 </tr>
 </tbody>
 </table>
@@ -266,14 +284,11 @@ deleting comments.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>BaseModel</p></td>
-<td><p>Base class for all database models, providing common fields like <cite>id</cite>, <cite>created</cite>, and <cite>modified</cite>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Comment</p></td>
+<tr class="row-even"><td><p>Comment</p></td>
 <td><p>SQLModel class representing the <cite>comments</cite> table.</p></td>
 </tr>
-<tr class="row-even"><td><p>CommentManager</p></td>
-<td><p>Provides static methods for managing comments.</p></td>
+<tr class="row-odd"><td><p>CommentManager</p></td>
+<td><p>Provides static methods for managing comments (create, read, update, delete, list, search, count).</p></td>
 </tr>
 </tbody>
 </table>
@@ -282,7 +297,7 @@ deleting comments.</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
 <span class="n">comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_comment</span><span class="p">({</span>
-    <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test comment.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;conversation_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
 <span class="p">})</span>
@@ -332,7 +347,7 @@ deleting comments.</p>
 <section id="module-litepolis_database_default.Conversations">
 <span id="conversations-table"></span><h2>Conversations Table<a class="headerlink" href="#module-litepolis_database_default.Conversations" title="Link to this heading"></a></h2>
 <p>This module defines the Conversation model and ConversationManager class for interacting with the ‘conversations’ table in the database.</p>
-<p>The ‘conversations’ table stores information about conversations, including their title, description, and archive status.
+<p>The ‘conversations’ table stores information about conversations, including their title, description, archive status, and the user who created them.
 It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id6">
 <caption><span class="caption-text">Table Schema</span><a class="headerlink" href="#id6" title="Link to this table"></a></caption>
@@ -347,23 +362,27 @@ It also includes timestamps for creation and modification.</p>
 <td><p>INTEGER</p></td>
 <td><p>Unique identifier for the conversation.</p></td>
 </tr>
-<tr class="row-odd"><td><p>title</p></td>
+<tr class="row-odd"><td><p>user_id</p></td>
+<td><p>INTEGER</p></td>
+<td><p>Foreign key referencing the user who created the conversation.</p></td>
+</tr>
+<tr class="row-even"><td><p>title</p></td>
 <td><p>VARCHAR</p></td>
 <td><p>Title of the conversation.</p></td>
 </tr>
-<tr class="row-even"><td><p>description</p></td>
+<tr class="row-odd"><td><p>description</p></td>
 <td><p>VARCHAR</p></td>
 <td><p>Description of the conversation.</p></td>
 </tr>
-<tr class="row-odd"><td><p>is_archived</p></td>
+<tr class="row-even"><td><p>is_archived</p></td>
 <td><p>BOOLEAN</p></td>
 <td><p>Indicates whether the conversation is archived.</p></td>
 </tr>
-<tr class="row-even"><td><p>created</p></td>
+<tr class="row-odd"><td><p>created</p></td>
 <td><p>DATETIME</p></td>
 <td><p>Timestamp indicating when the conversation was created.</p></td>
 </tr>
-<tr class="row-odd"><td><p>modified</p></td>
+<tr class="row-even"><td><p>modified</p></td>
 <td><p>DATETIME</p></td>
 <td><p>Timestamp indicating when the conversation was last modified.</p></td>
 </tr>
@@ -372,19 +391,23 @@ It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id7">
 <caption><span class="caption-text">Relationships</span><a class="headerlink" href="#id7" title="Link to this table"></a></caption>
 <tbody>
-<tr class="row-odd"><td><p>Comment</p></td>
-<td><p>One-to-many.</p></td>
+<tr class="row-odd"><td><p>comments</p></td>
+<td><p>One-to-many relationship with the Comment model.</p></td>
+</tr>
+<tr class="row-even"><td><p>user</p></td>
+<td><p>Many-to-one relationship with the User model.</p></td>
 </tr>
 </tbody>
 </table>
 <p>The ConversationManager class provides static methods for performing CRUD (Create, Read, Update, Delete) operations
-on the ‘conversations’ table.</p>
+on the ‘conversations’ table, as well as methods for listing, searching, counting, and archiving conversations.</p>
 <p>To use the methods in this module, import DatabaseActor.  For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
 <span class="n">conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">({</span>
     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Conversation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A new conversation about a topic.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
 <span class="p">})</span>
 </pre></div>
 </div>
@@ -426,55 +449,6 @@ on the ‘conversations’ table.</p>
 
 <span class="c1"># Archive a conversation</span>
 <span class="n">archived_conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">archive_conversation</span><span class="p">(</span><span class="n">conversation_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="reports-table">
-<h2>Reports Table<a class="headerlink" href="#reports-table" title="Link to this heading"></a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default.Report</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReportStatus</span>
-
-<span class="c1"># Create a report</span>
-<span class="n">report</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_report</span><span class="p">({</span>
-    <span class="s2">&quot;reporter_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;target_comment_id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;Inappropriate content&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;pending&quot;</span>
-<span class="p">})</span>
-
-<span class="c1"># Read a report by ID</span>
-<span class="n">report</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">read_report</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1"># List reports by status with pagination and ordering</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">list_reports_by_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">ReportStatus</span><span class="o">.</span><span class="n">pending</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">order_by</span><span class="o">=</span><span class="s2">&quot;created&quot;</span><span class="p">,</span> <span class="n">order_direction</span><span class="o">=</span><span class="s2">&quot;desc&quot;</span><span class="p">)</span>
-
-<span class="c1"># Update a report</span>
-<span class="n">updated_report</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_report</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;resolved&quot;</span><span class="p">})</span>
-
-<span class="c1"># Delete a report</span>
-<span class="n">success</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">delete_report</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1"># Search reports by reason</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">search_reports_by_reason</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="s2">&quot;inappropriate&quot;</span><span class="p">)</span>
-
-<span class="c1"># List reports by reporter ID with pagination</span>
-<span class="n">reports</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">list_reports_by_reporter_id</span><span class="p">(</span><span class="n">reporter_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># List reports created in a date range</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
-<span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
-
-<span class="n">reports</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">list_reports_created_in_date_range</span><span class="p">(</span><span class="n">start_date</span><span class="o">=</span><span class="n">start</span><span class="p">,</span> <span class="n">end_date</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
-
-<span class="c1"># Count reports by status</span>
-<span class="n">count</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">count_reports_by_status</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">ReportStatus</span><span class="o">.</span><span class="n">pending</span><span class="p">)</span>
-
-<span class="c1"># Resolve a report</span>
-<span class="n">resolved_report</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">resolve_report</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">resolution_notes</span><span class="o">=</span><span class="s2">&quot;Resolved after review.&quot;</span><span class="p">)</span>
-
-<span class="c1"># Escalate a report</span>
-<span class="n">escalated_report</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">escalate_report</span><span class="p">(</span><span class="n">report_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">resolution_notes</span><span class="o">=</span><span class="s2">&quot;Escalated for further review.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -540,13 +514,10 @@ about individual votes, including the voter, target comment, and vote value.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>BaseModel</p></td>
-<td><p>Base class for all database models, providing common fields like <cite>id</cite>, <cite>created</cite>, and <cite>modified</cite>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Vote</p></td>
+<tr class="row-even"><td><p>Vote</p></td>
 <td><p>SQLModel class representing the <cite>votes</cite> table.</p></td>
 </tr>
-<tr class="row-even"><td><p>VoteManager</p></td>
+<tr class="row-odd"><td><p>VoteManager</p></td>
 <td><p>Provides static methods for managing votes.</p></td>
 </tr>
 </tbody>

@@ -1,4 +1,4 @@
-from litepolis_database_default.Conversations import ConversationManager
+from litepolis_database_default.Actor import DatabaseActor
 import pytest
 
 def test_create_conversation():
@@ -6,14 +6,14 @@ def test_create_conversation():
         "title": "Test Conversation",
         "description": "This is a test conversation."
     }
-    conversation = ConversationManager.create_conversation(data)
+    conversation = DatabaseActor.create_conversation(data)
     assert conversation.title == data["title"]
     assert conversation.description == data["description"]
     assert conversation.is_archived == False
     conversation_id = conversation.id
 
     # Clean up
-    assert ConversationManager.delete_conversation(conversation_id)
+    assert DatabaseActor.delete_conversation(conversation_id)
 
 
 def test_read_conversation():
@@ -22,16 +22,16 @@ def test_read_conversation():
         "title": "Test Conversation",
         "description": "This is a test conversation."
     }
-    conversation = ConversationManager.create_conversation(data)
+    conversation = DatabaseActor.create_conversation(data)
     conversation_id = conversation.id
 
-    read_conversation = ConversationManager.read_conversation(conversation_id)
+    read_conversation = DatabaseActor.read_conversation(conversation_id)
     assert read_conversation.title == data["title"]
     assert read_conversation.description == data["description"]
     assert read_conversation.is_archived == False
 
     # Clean up
-    assert ConversationManager.delete_conversation(conversation_id)
+    assert DatabaseActor.delete_conversation(conversation_id)
 
 
 def test_read_conversation():
@@ -40,20 +40,20 @@ def test_read_conversation():
         "title": "Test Conversation 1",
         "description": "This is a test conversation 1."
     }
-    ConversationManager.create_conversation(data1)
+    DatabaseActor.create_conversation(data1)
     data2 = {
         "title": "Test Conversation 2",
         "description": "This is a test conversation 2."
     }
-    ConversationManager.create_conversation(data2)
+    DatabaseActor.create_conversation(data2)
 
-    conversations = ConversationManager.list_conversations()
+    conversations = DatabaseActor.list_conversations()
     assert isinstance(conversations, list)
     assert len(conversations) >= 2  # Assuming there are no other conversations in the database
 
     # Clean up (very basic, assumes the last two created)
-    assert ConversationManager.delete_conversation(conversations[-1].id)
-    assert ConversationManager.delete_conversation(conversations[-2].id)
+    assert DatabaseActor.delete_conversation(conversations[-1].id)
+    assert DatabaseActor.delete_conversation(conversations[-2].id)
 
 
 def test_update_conversation():
@@ -62,7 +62,7 @@ def test_update_conversation():
         "title": "Test Conversation",
         "description": "This is a test conversation."
     }
-    conversation = ConversationManager.create_conversation(data)
+    conversation = DatabaseActor.create_conversation(data)
     conversation_id = conversation.id
 
     # Update the conversation
@@ -71,13 +71,13 @@ def test_update_conversation():
         "description": "Updated description",
         "is_archived": True
     }
-    updated_conversation = ConversationManager.update_conversation(conversation_id, updated_data)
+    updated_conversation = DatabaseActor.update_conversation(conversation_id, updated_data)
     assert updated_conversation.title == updated_data["title"]
     assert updated_conversation.description == updated_data["description"]
     assert updated_conversation.is_archived == updated_data["is_archived"]
 
     # Clean up
-    assert ConversationManager.delete_conversation(conversation_id)
+    assert DatabaseActor.delete_conversation(conversation_id)
 
 
 def test_delete_conversation():
@@ -86,12 +86,12 @@ def test_delete_conversation():
         "title": "Test Conversation",
         "description": "This is a test conversation."
     }
-    conversation = ConversationManager.create_conversation(data)
+    conversation = DatabaseActor.create_conversation(data)
     conversation_id = conversation.id
 
     # Delete the conversation
-    assert ConversationManager.delete_conversation(conversation_id)
+    assert DatabaseActor.delete_conversation(conversation_id)
 
     # Try to get the deleted conversation (should return None)
-    deleted_conversation = ConversationManager.read_conversation(conversation_id)
+    deleted_conversation = DatabaseActor.read_conversation(conversation_id)
     assert deleted_conversation is None

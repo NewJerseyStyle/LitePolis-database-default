@@ -1,4 +1,3 @@
-from litepolis_database_default.Conversations import ConversationManager, Conversation
 from litepolis_database_default.Actor import DatabaseActor
 import pytest
 from typing import Optional
@@ -18,7 +17,7 @@ def test_create_conversation():
         "description": "This is a test conversation",
         "user_id": user.id
     }
-    conversation = ConversationManager.create_conversation(conversation_data)
+    conversation = DatabaseActor.create_conversation(conversation_data)
     
     assert conversation.id is not None
     assert conversation.title == "Test Conversation"
@@ -38,10 +37,10 @@ def test_get_conversation():
         "description": "Getting this one",
         "user_id": user.id
     }
-    conversation = ConversationManager.create_conversation(conversation_data)
+    conversation = DatabaseActor.create_conversation(conversation_data)
     
     # Retrieve conversation
-    retrieved_conversation = ConversationManager.read_conversation(conversation.id)
+    retrieved_conversation = DatabaseActor.read_conversation(conversation.id)
     assert retrieved_conversation.id == conversation.id
     assert retrieved_conversation.title == "Get Test Conversation"
 
@@ -59,15 +58,15 @@ def test_update_conversation():
         "description": "Updating this one",
         "user_id": user.id
     }
-    conversation = ConversationManager.create_conversation(conversation_data)
+    conversation = DatabaseActor.create_conversation(conversation_data)
     
     updated_title = "Updated Conversation"
     # Update conversation
     update_data = {"title": updated_title}
-    updated_conversation = ConversationManager.update_conversation(conversation.id, update_data)
+    updated_conversation = DatabaseActor.update_conversation(conversation.id, update_data)
     
     # Verify update
-    retrieved_conversation = ConversationManager.read_conversation(conversation.id)
+    retrieved_conversation = DatabaseActor.read_conversation(conversation.id)
     assert retrieved_conversation.title == updated_title
 
 def test_delete_conversation():
@@ -84,12 +83,12 @@ def test_delete_conversation():
         "description": "Deleting this one",
         "user_id": user.id
     }
-    conversation = ConversationManager.create_conversation(conversation_data)
+    conversation = DatabaseActor.create_conversation(conversation_data)
     
     # Delete conversation
-    deleted = ConversationManager.delete_conversation(conversation.id)
+    deleted = DatabaseActor.delete_conversation(conversation.id)
     assert deleted is True
     
     # Verify deletion
-    retrieved_conversation = ConversationManager.read_conversation(conversation.id)
+    retrieved_conversation = DatabaseActor.read_conversation(conversation.id)
     assert retrieved_conversation is None

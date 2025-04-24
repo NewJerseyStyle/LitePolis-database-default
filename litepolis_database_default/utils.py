@@ -20,11 +20,11 @@ DEFAULT_CONFIG = {
 database_url = DEFAULT_CONFIG.get("database_url")
 engine_pool_size = DEFAULT_CONFIG.get("sqlalchemy_engine_pool_size")
 pool_max_overflow = DEFAULT_CONFIG.get("sqlalchemy_pool_max_overflow")
-# if ("PYTEST_CURRENT_TEST" not in os.environ and
-#     "PYTEST_VERSION" not in os.environ):
-#     database_url = get_config("litepolis_database_default", "database_url")
-#     engine_pool_size = get_config("litepolis_database_default", "sqlalchemy_engine_pool_size")
-#     pool_max_overflow = get_config("litepolis_database_default", "sqlalchemy_pool_max_overflow")
+if ("PYTEST_CURRENT_TEST" not in os.environ and
+    "PYTEST_VERSION" not in os.environ):
+    database_url = get_config("litepolis_database_default", "database_url")
+    engine_pool_size = get_config("litepolis_database_default", "sqlalchemy_engine_pool_size")
+    pool_max_overflow = get_config("litepolis_database_default", "sqlalchemy_pool_max_overflow")
 
 
 @contextmanager

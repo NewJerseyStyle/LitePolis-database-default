@@ -2,7 +2,8 @@
 This module defines the User model and UserManager class for interacting with the 'users' table in the database.
 
 The 'users' table stores information about users, including their email, authentication token, and admin status.
-It also includes timestamps for creation and modification.
+It also includes timestamps for creation and modification. The table supports both standard SQL databases and StarRocks,
+with some specific handling for StarRocks (e.g., unique constraints and primary keys).
 
 .. list-table:: Table Schema
    :header-rows: 1
@@ -31,15 +32,15 @@ It also includes timestamps for creation and modification.
 
 .. list-table:: Relationships
 
-    * - Report
-      - One-to-many.
     * - Comment
       - One-to-many.
     * - Vote
       - One-to-many.
+    * - Conversation
+      - One-to-many.
 
-The UserManager class provides static methods for performing CRUD (Create, Read, Update, Delete) operations
-on the 'users' table.
+The UserManager class provides static methods for interacting with the 'users' table, including CRUD operations,
+searching, listing with pagination, and counting.
 
 To use the methods in this module, import DatabaseActor.  For example::
 
@@ -77,7 +78,6 @@ class User(SQLModel, table=True):
     created: datetime = Field(default_factory=lambda: datetime.now(UTC))
     modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
-    reports: List["Report"] = Relationship(back_populates="reporter")
     comments: List["Comment"] = Relationship(back_populates="user")
     votes: List["Vote"] = Relationship(back_populates="user")
     conversation: List["Conversation"] = Relationship(back_populates="user")
@@ -86,14 +86,33 @@ class User(SQLModel, table=True):
 class UserManager:
     @staticmethod
     def create_user(data: Dict[str, Any]) -> Optional[User]:
-        """Direct SQL insert for StarRocks"""
+        """Creates a new User record.
+
+        Handles checking for existing email before creation, especially for StarRocks.
+
+        Args:
+            data: A dictionary containing user data (e.g., "email", "auth_token").
+
+        Returns:
+            The created User object, or None if a user with the same email already exists.
+
+        To use this method, import DatabaseActor.  For example::
+
+            from litepolis_database_default import DatabaseActor
+
+            user = DatabaseActor.create_user({
+                "email": "test@example.com",
+                "auth_token": "auth_token",
+            })
+        """
         if is_starrocks_engine():
             with get_session() as session:
-                existing = session.exec(
-                    select(User).where(User.email == data["email"])
+                # Select only the ID to check for existence, potentially simpler for StarRocks analyzer
+                existing_id = session.exec(
+                    select(User.id).where(User.email == data["email"])
                 ).first()
-                
-            if existing:
+
+            if existing_id is not None:
                 print("Email already exists")
                 return None
 
@@ -101,6 +120,8 @@ class UserManager:
         with get_session() as session:
             session.add(user)
             session.commit()
+            # StarRocks might not return the ID immediately on commit,
+            # so we fetch the created user explicitly.
             if is_starrocks_engine():
                 return session.exec(
                     select(User).where(User.email == data["email"])
@@ -111,6 +132,12 @@ class UserManager:
     @staticmethod
     def read_user(user_id: int) -> Optional[User]:
         """Reads a User record by ID.
+
+        Args:
+            user_id: The unique identifier of the user.
+
+        Returns:
+            The User object if found, otherwise None.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -123,7 +150,13 @@ class UserManager:
 
     @staticmethod
     def read_user_by_email(email: str) -> Optional[User]:
-        """Reads a User record by email.
+        """Reads a User record by email address.
+
+        Args:
+            email: The email address of the user.
+
+        Returns:
+            The User object if found, otherwise None.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -138,6 +171,13 @@ class UserManager:
     @staticmethod
     def list_users(page: int = 1, page_size: int = 10) -> List[User]:
         """Lists User records with pagination.
+
+        Args:
+            page: The page number (1-based). Defaults to 1.
+            page_size: The number of records per page. Defaults to 10.
+
+        Returns:
+            A list of User objects for the specified page.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -156,7 +196,14 @@ class UserManager:
 
     @staticmethod
     def update_user(user_id: int, data: Dict[str, Any]) -> Optional[User]:
-        """Updates a User record by ID.
+        """Updates a User record by ID with the provided data.
+
+        Args:
+            user_id: The unique identifier of the user to update.
+            data: A dictionary containing the fields and new values to update.
+
+        Returns:
+            The updated User object if found and updated, otherwise None.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -172,12 +219,22 @@ class UserManager:
                 setattr(user_instance, key, value)
             session.add(user_instance)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(User).where(User.id == user_id)
+                ).first()
             session.refresh(user_instance)
             return user_instance
 
     @staticmethod
     def delete_user(user_id: int) -> bool:
-        """Deletes a User record by ID. Returns True if successful.
+        """Deletes a User record by ID.
+
+        Args:
+            user_id: The unique identifier of the user to delete.
+
+        Returns:
+            True if the user was found and deleted, False otherwise.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -195,7 +252,13 @@ class UserManager:
             
     @staticmethod
     def search_users_by_email(query: str) -> List[User]:
-        """Search users by email.
+        """Searches for users whose email address contains the specified query string.
+
+        Args:
+            query: The string to search for within email addresses.
+
+        Returns:
+            A list of User objects matching the search query.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -208,7 +271,13 @@ class UserManager:
 
     @staticmethod
     def list_users_by_admin_status(is_admin: bool) -> List[User]:
-        """List users by admin status.
+        """Lists users based on their admin status.
+
+        Args:
+            is_admin: A boolean indicating whether to list administrators (True) or non-administrators (False).
+
+        Returns:
+            A list of User objects matching the specified admin status.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -221,7 +290,14 @@ class UserManager:
 
     @staticmethod
     def list_users_created_in_date_range(start_date: datetime, end_date: datetime) -> List[User]:
-        """List users created in a date range.
+        """Lists users created within a specified date range (inclusive).
+
+        Args:
+            start_date: The start of the date range.
+            end_date: The end of the date range.
+
+        Returns:
+            A list of User objects created within the specified range.
 
         To use this method, import DatabaseActor.  For example::
 
@@ -236,7 +312,10 @@ class UserManager:
 
     @staticmethod
     def count_users() -> int:
-        """Counts all User records.
+        """Counts the total number of User records in the database.
+
+        Returns:
+            The total count of users.
 
         To use this method, import DatabaseActor.  For example:
 
