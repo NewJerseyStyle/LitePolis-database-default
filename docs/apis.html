@@ -53,6 +53,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.created"><code class="docutils literal notranslate"><span class="pre">Comment.created</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.id"><code class="docutils literal notranslate"><span class="pre">Comment.id</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.model_config"><code class="docutils literal notranslate"><span class="pre">Comment.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.moderation_status"><code class="docutils literal notranslate"><span class="pre">Comment.moderation_status</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.modified"><code class="docutils literal notranslate"><span class="pre">Comment.modified</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.parent_comment"><code class="docutils literal notranslate"><span class="pre">Comment.parent_comment</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Comments.Comment.parent_comment_id"><code class="docutils literal notranslate"><span class="pre">Comment.parent_comment_id</span></code></a></li>
@@ -87,6 +88,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.is_archived"><code class="docutils literal notranslate"><span class="pre">Conversation.is_archived</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.model_config"><code class="docutils literal notranslate"><span class="pre">Conversation.model_config</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.modified"><code class="docutils literal notranslate"><span class="pre">Conversation.modified</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.settings"><code class="docutils literal notranslate"><span class="pre">Conversation.settings</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.title"><code class="docutils literal notranslate"><span class="pre">Conversation.title</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.user"><code class="docutils literal notranslate"><span class="pre">Conversation.user</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#litepolis_database_default.Conversations.Conversation.user_id"><code class="docutils literal notranslate"><span class="pre">Conversation.user_id</span></code></a></li>
@@ -227,9 +229,10 @@ providing a unified interface for database interactions.</p>
 and the <cite>CommentManager</cite> class for managing comment data.</p>
 <p>The <cite>Comment</cite> model represents the <cite>comments</cite> table and includes fields for
 the comment’s content (<cite>text_field</cite>), timestamps (<cite>created</cite>, <cite>modified</cite>),
-and foreign keys linking to the user (<cite>user_id</cite>), conversation (<cite>conversation_id</cite>),
-and parent comment (<cite>parent_comment_id</cite>). It also defines relationships to
-related <cite>User</cite>, <cite>Conversation</cite>, <cite>Vote</cite>, and other <cite>Comment</cite> instances (for replies).</p>
+moderation status (<cite>moderation_status</cite>), and foreign keys linking to the user (<cite>user_id</cite>),
+conversation (<cite>conversation_id</cite>), and parent comment (<cite>parent_comment_id</cite>).
+It also defines relationships to related <cite>User</cite>, <cite>Conversation</cite>, <cite>Vote</cite>, and other
+<cite>Comment</cite> instances (for replies).</p>
 <p>The <cite>CommentManager</cite> class provides static methods for common database operations
 on comments, such as creating, reading, updating, deleting, listing by various
 criteria (conversation, user, date range), searching, and counting.</p>
@@ -248,7 +251,7 @@ criteria (conversation, user, date range), searching, and counting.</p>
 <td><p>Stores conversation information (id, title, etc.).</p></td>
 </tr>
 <tr class="row-even"><td><p>comments</p></td>
-<td><p>Stores comment information (id, text_field, user_id, conversation_id, parent_comment_id, created, modified).</p></td>
+<td><p>Stores comment information (id, text_field, user_id, conversation_id, parent_comment_id, created, modified, moderation_status).</p></td>
 </tr>
 <tr class="row-odd"><td><p>votes</p></td>
 <td><p>Stores vote information (id, user_id, comment_id, value).</p></td>
@@ -284,19 +287,22 @@ criteria (conversation, user, date range), searching, and counting.</p>
 <tr class="row-even"><td><p>modified (datetime)</p></td>
 <td><p>Timestamp of when the comment was last modified.</p></td>
 </tr>
-<tr class="row-odd"><td><p>user (Relationship)</p></td>
+<tr class="row-odd"><td><p>moderation_status (int)</p></td>
+<td><p>Status indicating the moderation state of the comment (e.g., 0: default, 1: pending, 2: approved, 3: rejected).</p></td>
+</tr>
+<tr class="row-even"><td><p>user (Relationship)</p></td>
 <td><p>Relationship to the User who created the comment.</p></td>
 </tr>
-<tr class="row-even"><td><p>conversation (Relationship)</p></td>
+<tr class="row-odd"><td><p>conversation (Relationship)</p></td>
 <td><p>Relationship to the Conversation the comment belongs to.</p></td>
 </tr>
-<tr class="row-odd"><td><p>votes (Relationship)</p></td>
+<tr class="row-even"><td><p>votes (Relationship)</p></td>
 <td><p>Relationship to the Votes associated with this comment.</p></td>
 </tr>
-<tr class="row-even"><td><p>replies (Relationship)</p></td>
+<tr class="row-odd"><td><p>replies (Relationship)</p></td>
 <td><p>Relationship to other Comments that are replies to this comment.</p></td>
 </tr>
-<tr class="row-odd"><td><p>parent_comment (Relationship)</p></td>
+<tr class="row-even"><td><p>parent_comment (Relationship)</p></td>
 <td><p>Relationship to the parent Comment if this is a reply.</p></td>
 </tr>
 </tbody>
@@ -325,12 +331,13 @@ criteria (conversation, user, date range), searching, and counting.</p>
     <span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a test comment.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;conversation_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;moderation_status&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="c1"># Include new field if needed, or rely on default</span>
 <span class="p">})</span>
 </pre></div>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Comments.</span></span><span class="sig-name descname"><span class="pre">Comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_field:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_comment_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Comments.Comment" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Comments.</span></span><span class="sig-name descname"><span class="pre">Comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text_field:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conversation_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_comment_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moderation_status:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Comments.Comment" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment.conversation">
@@ -357,6 +364,11 @@ criteria (conversation, user, date range), searching, and counting.</p>
 <span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'from_attributes':</span> <span class="pre">True,</span> <span class="pre">'read_from_attributes':</span> <span class="pre">True,</span> <span class="pre">'read_with_orm_mode':</span> <span class="pre">True,</span> <span class="pre">'registry':</span> <span class="pre">PydanticUndefined,</span> <span class="pre">'table':</span> <span class="pre">True}</span></em><a class="headerlink" href="#litepolis_database_default.Comments.Comment.model_config" title="Link to this definition"></a></dt>
 <dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment.moderation_status">
+<span class="sig-name descname"><span class="pre">moderation_status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#litepolis_database_default.Comments.Comment.moderation_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Comments.Comment.modified">
@@ -428,8 +440,8 @@ criteria (conversation, user, date range), searching, and counting.</p>
 <dd><p>Creates a new Comment record.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
-<dt>data (Dict[str, Any]): A dictionary containing the data for the new Comment.</dt><dd><p>Must include ‘text_field’, ‘user_id’, ‘conversation_id’,
-‘parent_comment_id’.</p>
+<dt>data (Dict[str, Any]): A dictionary containing the data for the new Comment.</dt><dd><p>Must include ‘text_field’, ‘user_id’, ‘conversation_id’.
+Can optionally include ‘parent_comment_id’ and ‘moderation_status’.</p>
 </dd>
 </dl>
 </dd>
@@ -440,7 +452,8 @@ criteria (conversation, user, date range), searching, and counting.</p>
 <span class="n">comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_comment</span><span class="p">({</span>
     <span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a comment.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;conversation_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="s2">&quot;conversation_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;moderation_status&quot;</span><span class="p">:</span> <span class="mi">0</span>
 <span class="p">})</span>
 </pre></div>
 </div>
@@ -499,11 +512,8 @@ criteria (conversation, user, date range), searching, and counting.</p>
 <dt>Args:</dt><dd><p>conversation_id (int): The ID of the conversation to list comments for.
 page (int): The page number to retrieve (default: 1).
 page_size (int): The number of comments per page (default: 10).
-order_by (str): The field to order the comments by (default: “created”).</p>
-<blockquote>
-<div><p>Must be a valid column name of the Comment model.</p>
-</div></blockquote>
-<p>order_direction (str): The direction to order the comments in (“asc” or “desc”, default: “asc”).</p>
+order_by (str): The field to order the comments by (default: “created”). Must be a valid column name of the Comment model.
+order_direction (str): The direction to order the comments in (“asc” or “desc”, default: “asc”).</p>
 </dd>
 <dt>Returns:</dt><dd><p>List[Comment]: A list of Comment instances for the given conversation, page, and sorting.</p>
 </dd>
@@ -605,14 +615,14 @@ end_date (datetime): The end date (inclusive) of the range.</p>
 <dt>Args:</dt><dd><p>comment_id (int): The ID of the Comment to update.
 data (Dict[str, Any]): A dictionary containing the data to update.</p>
 <blockquote>
-<div><p>Keys should match Comment model field names (e.g., ‘text_field’).</p>
+<div><p>Keys should match Comment model field names (e.g., ‘text_field’, ‘moderation_status’).</p>
 </div></blockquote>
 </dd>
 <dt>Returns:</dt><dd><p>Optional[Comment]: The updated Comment instance if found, otherwise None.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
-<span class="n">updated_comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_comment</span><span class="p">(</span><span class="n">comment_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated comment text.&quot;</span><span class="p">})</span>
+<span class="n">updated_comment</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_comment</span><span class="p">(</span><span class="n">comment_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;text_field&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated comment text.&quot;</span><span class="p">,</span> <span class="s2">&quot;moderation_status&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>
 </dd>
@@ -625,7 +635,8 @@ data (Dict[str, Any]): A dictionary containing the data to update.</p>
 <section id="module-litepolis_database_default.Conversations">
 <span id="conversations-module"></span><h2>Conversations module<a class="headerlink" href="#module-litepolis_database_default.Conversations" title="Link to this heading"></a></h2>
 <p>This module defines the Conversation model and ConversationManager class for interacting with the ‘conversations’ table in the database.</p>
-<p>The ‘conversations’ table stores information about conversations, including their title, description, archive status, and the user who created them.
+<p>The ‘conversations’ table stores information about conversations, including their title, description, archive status,
+arbitrary settings in a JSON format, and the user who created them.
 It also includes timestamps for creation and modification.</p>
 <table class="docutils align-default" id="id4">
 <caption><span class="caption-text">Table Schema</span><a class="headerlink" href="#id4" title="Link to this table"></a></caption>
@@ -664,6 +675,10 @@ It also includes timestamps for creation and modification.</p>
 <td><p>DATETIME</p></td>
 <td><p>Timestamp indicating when the conversation was last modified.</p></td>
 </tr>
+<tr class="row-odd"><td><p>settings</p></td>
+<td><p>JSON</p></td>
+<td><p>Arbitrary key-value settings for the conversation.</p></td>
+</tr>
 </tbody>
 </table>
 <table class="docutils align-default" id="id5">
@@ -685,13 +700,14 @@ on the ‘conversations’ table, as well as methods for listing, searching, cou
 <span class="n">conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">({</span>
     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Conversation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A new conversation about a topic.&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;settings&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;public&quot;</span><span class="p">}</span>
 <span class="p">})</span>
 </pre></div>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Conversations.</span></span><span class="sig-name descname"><span class="pre">Conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_archived:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">litepolis_database_default.Conversations.</span></span><span class="sig-name descname"><span class="pre">Conversation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_id:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_archived:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified:</span> <span class="pre">~datetime.datetime</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings:</span> <span class="pre">~typing.Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">~typing.Any]</span> <span class="pre">=</span> <span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SQLModel</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation.comments">
@@ -727,6 +743,11 @@ on the ‘conversations’ table, as well as methods for listing, searching, cou
 <dl class="py attribute">
 <dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation.modified">
 <span class="sig-name descname"><span class="pre">modified</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation.modified" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="litepolis_database_default.Conversations.Conversation.settings">
+<span class="sig-name descname"><span class="pre">settings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#litepolis_database_default.Conversations.Conversation.settings" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -792,7 +813,8 @@ on the ‘conversations’ table, as well as methods for listing, searching, cou
 <dl>
 <dt>Args:</dt><dd><dl class="simple">
 <dt>data (Dict[str, Any]): A dictionary containing the data for the new Conversation.</dt><dd><p>Expected keys include ‘title’ (required), ‘description’ (optional),
-‘is_archived’ (optional, defaults to False), and ‘user_id’ (optional).</p>
+‘is_archived’ (optional, defaults to False), ‘user_id’ (optional),
+and ‘settings’ (optional, defaults to {}).</p>
 </dd>
 </dl>
 </dd>
@@ -803,7 +825,8 @@ on the ‘conversations’ table, as well as methods for listing, searching, cou
 <span class="n">conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">create_conversation</span><span class="p">({</span>
     <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;New Conversation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A new conversation about a topic.&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;settings&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;public&quot;</span><span class="p">}</span>
 <span class="p">})</span>
 </pre></div>
 </div>
@@ -933,12 +956,15 @@ end_date (datetime): The end date of the range.</p>
 <dl>
 <dt>Args:</dt><dd><p>conversation_id (int): The ID of the Conversation to update.
 data (Dict[str, Any]): A dictionary containing the data to update.</p>
+<blockquote>
+<div><p>Allowed keys include ‘title’, ‘description’, ‘is_archived’, ‘user_id’, and ‘settings’.</p>
+</div></blockquote>
 </dd>
 <dt>Returns:</dt><dd><p>Optional[Conversation]: The updated Conversation instance if found, otherwise None.</p>
 </dd>
 <dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">litepolis_database_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseActor</span>
 
-<span class="n">updated_conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_conversation</span><span class="p">(</span><span class="n">conversation_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated Title&quot;</span><span class="p">})</span>
+<span class="n">updated_conversation</span> <span class="o">=</span> <span class="n">DatabaseActor</span><span class="o">.</span><span class="n">update_conversation</span><span class="p">(</span><span class="n">conversation_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="s2">&quot;Updated Title&quot;</span><span class="p">,</span> <span class="s2">&quot;settings&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="s2">&quot;private&quot;</span><span class="p">}})</span>
 </pre></div>
 </div>
 </dd>
@@ -1634,7 +1660,7 @@ data (Dict[str, Any]): A dictionary containing the data to update.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="litepolis_database_default.utils.is_starrocks_engine">
-<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils.</span></span><span class="sig-name descname"><span class="pre">is_starrocks_engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine=Engine(starrocks://litepolis:***&#64;localhost:9030/litepolis_default)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#litepolis_database_default.utils.is_starrocks_engine" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">litepolis_database_default.utils.</span></span><span class="sig-name descname"><span class="pre">is_starrocks_engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">engine=Engine(sqlite:///database.db)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#litepolis_database_default.utils.is_starrocks_engine" title="Link to this definition"></a></dt>
 <dd><p>Determine if the engine is connected to StarRocks</p>
 </dd></dl>
 
