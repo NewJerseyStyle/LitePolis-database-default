@@ -10,6 +10,7 @@ def test_create_conversation():
     assert conversation.title == data["title"]
     assert conversation.description == data["description"]
     assert conversation.is_archived == False
+    assert conversation.settings == {} # Assert default settings
     conversation_id = conversation.id
 
     # Clean up
@@ -69,12 +70,14 @@ def test_update_conversation():
     updated_data = {
         "title": "Updated Title",
         "description": "Updated description",
-        "is_archived": True
+        "is_archived": True,
+        "settings": {"Participants can see visualization": True}
     }
     updated_conversation = DatabaseActor.update_conversation(conversation_id, updated_data)
     assert updated_conversation.title == updated_data["title"]
     assert updated_conversation.description == updated_data["description"]
     assert updated_conversation.is_archived == updated_data["is_archived"]
+    assert updated_conversation.settings == updated_data["settings"]
 
     # Clean up
     assert DatabaseActor.delete_conversation(conversation_id)

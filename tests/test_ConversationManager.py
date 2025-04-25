@@ -22,6 +22,7 @@ def test_create_conversation():
     assert conversation.id is not None
     assert conversation.title == "Test Conversation"
     assert conversation.description == "This is a test conversation"
+    assert conversation.settings == {} # Assert default settings
 
 def test_get_conversation():
     # Create user
@@ -92,3 +93,31 @@ def test_delete_conversation():
     # Verify deletion
     retrieved_conversation = DatabaseActor.read_conversation(conversation.id)
     assert retrieved_conversation is None
+
+def test_update_conversation_settings():
+    # Create user
+    user_data = {
+        "email": "conv_test_settings_update@example.com",
+        "auth_token": "conv-settings-token"
+    }
+    user = DatabaseActor.create_user(user_data)
+
+    # Create conversation
+    conversation_data = {
+        "title": "Test Conversation for Settings Update",
+        "description": "Test description",
+        "user_id": user.id
+    }
+    conversation = DatabaseActor.create_conversation(conversation_data)
+
+    # Update conversation settings
+    updated_settings = {"Participants can see visualization": True, "Participants can submit comments": False}
+    DatabaseActor.update_conversation(conversation.id, {"settings": updated_settings})
+
+    # Verify update
+    retrieved_conversation = DatabaseActor.read_conversation(conversation.id)
+    assert retrieved_conversation.settings == updated_settings
+
+    # Clean up
+    assert DatabaseActor.delete_user(user.id)
+    assert DatabaseActor.delete_conversation(conversation.id)

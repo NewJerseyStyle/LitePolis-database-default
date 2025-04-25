@@ -27,6 +27,7 @@ def test_create_comment():
     assert comment.text_field == "Test comment"
     assert comment.user_id == user.id
     assert comment.conversation_id == conversation.id
+    assert comment.moderation_status == 0 # Assert default moderation status
 
     assert DatabaseActor.delete_user(user.id)
     assert DatabaseActor.delete_conversation(conversation.id)
@@ -125,3 +126,37 @@ def test_delete_comment():
 
     assert DatabaseActor.delete_user(user.id)
     assert DatabaseActor.delete_conversation(conversation.id)
+
+def test_update_comment_status():
+    # Create test user
+    user = DatabaseActor.create_user({
+        "email": "comment_test_status_update@example.com",
+        "auth_token": "comment-token"
+    })
+
+    # Create test conversation
+    conversation = DatabaseActor.create_conversation({
+        "title": "Test Conversation for Status Update",
+        "description": "Test description",
+        "user_id": user.id
+    })
+
+    # Create comment
+    comment = DatabaseActor.create_comment({
+        "text_field": "Test comment for status update",
+        "user_id": user.id,
+        "conversation_id": conversation.id
+    })
+
+    # Update comment status to approved (1)
+    updated_status = 1
+    DatabaseActor.update_comment(comment.id, {"moderation_status": updated_status})
+
+    # Verify update
+    retrieved_comment = DatabaseActor.read_comment(comment.id)
+    assert retrieved_comment.moderation_status == updated_status
+
+    # Clean up
+    assert DatabaseActor.delete_user(user.id)
+    assert DatabaseActor.delete_conversation(conversation.id)
+    assert DatabaseActor.delete_comment(comment.id)

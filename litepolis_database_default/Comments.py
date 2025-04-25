@@ -4,9 +4,10 @@ and the `CommentManager` class for managing comment data.
 
 The `Comment` model represents the `comments` table and includes fields for
 the comment's content (`text_field`), timestamps (`created`, `modified`),
-and foreign keys linking to the user (`user_id`), conversation (`conversation_id`),
-and parent comment (`parent_comment_id`). It also defines relationships to
-related `User`, `Conversation`, `Vote`, and other `Comment` instances (for replies).
+moderation status (`moderation_status`), and foreign keys linking to the user (`user_id`),
+conversation (`conversation_id`), and parent comment (`parent_comment_id`).
+It also defines relationships to related `User`, `Conversation`, `Vote`, and other
+`Comment` instances (for replies).
 
 The `CommentManager` class provides static methods for common database operations
 on comments, such as creating, reading, updating, deleting, listing by various
@@ -22,7 +23,7 @@ criteria (conversation, user, date range), searching, and counting.
    * - conversations
      - Stores conversation information (id, title, etc.).
    * - comments
-     - Stores comment information (id, text_field, user_id, conversation_id, parent_comment_id, created, modified).
+     - Stores comment information (id, text_field, user_id, conversation_id, parent_comment_id, created, modified, moderation_status).
    * - votes
      - Stores vote information (id, user_id, comment_id, value).
 
@@ -45,6 +46,8 @@ criteria (conversation, user, date range), searching, and counting.
      - Timestamp of when the comment was created.
    * - modified (datetime)
      - Timestamp of when the comment was last modified.
+   * - moderation_status (int)
+     - Status indicating the moderation state of the comment (e.g., 0: default, 1: pending, 2: approved, 3: rejected).
    * - user (Relationship)
      - Relationship to the User who created the comment.
    * - conversation (Relationship)
@@ -77,6 +80,7 @@ To use the methods in this module, import `DatabaseActor` from
         "text_field": "This is a test comment.",
         "user_id": 1,
         "conversation_id": 1,
+        "moderation_status": 0 # Include new field if needed, or rely on default
     })
 """
 
@@ -110,6 +114,7 @@ class Comment(SQLModel, table=True):
     user_id: Optional[int] = Field(default=None, foreign_key="users.id") # Removed redundant index=True
     conversation_id: Optional[int] = Field(default=None, foreign_key="conversations.id") # Removed redundant index=True
     parent_comment_id: Optional[int] = Field(default=None, foreign_key="comments.id", nullable=True)
+    moderation_status: int = Field(default=0)
 
     user: Optional["User"] = Relationship(back_populates="comments")
     conversation: Optional["Conversation"] = Relationship(back_populates="comments")
@@ -125,8 +130,8 @@ class CommentManager:
 
         Args:
             data (Dict[str, Any]): A dictionary containing the data for the new Comment.
-                                  Must include 'text_field', 'user_id', 'conversation_id',
-                                  'parent_comment_id'.
+                                  Must include 'text_field', 'user_id', 'conversation_id'.
+                                  Can optionally include 'parent_comment_id' and 'moderation_status'.
 
         Returns:
             Comment: The newly created Comment instance.
@@ -139,7 +144,8 @@ class CommentManager:
                 comment = DatabaseActor.create_comment({
                     "text_field": "This is a comment.",
                     "user_id": 1,
-                    "conversation_id": 1
+                    "conversation_id": 1,
+                    "moderation_status": 0
                 })
         """
         with get_session() as session:
@@ -154,6 +160,10 @@ class CommentManager:
                 # involve a unique constraint or a different ID generation strategy
                 # for StarRocks if strict uniqueness is required immediately after insert.
                 # For now, this is a pragmatic approach.
+                # Note: Including moderation_status in the fetch criteria might be necessary
+                # if text_field, user_id, conversation_id are not unique enough.
+                # For simplicity, keeping the original fetch logic assuming it's sufficient
+                # for the current use case or that ID generation handles uniqueness.
                 return session.exec(
                     select(Comment).where(
                         Comment.user_id == data.get("user_id"),
@@ -192,8 +202,7 @@ class CommentManager:
             conversation_id (int): The ID of the conversation to list comments for.
             page (int): The page number to retrieve (default: 1).
             page_size (int): The number of comments per page (default: 10).
-            order_by (str): The field to order the comments by (default: "created").
-                            Must be a valid column name of the Comment model.
+            order_by (str): The field to order the comments by (default: "created"). Must be a valid column name of the Comment model.
             order_direction (str): The direction to order the comments in ("asc" or "desc", default: "asc").
 
         Returns:
@@ -234,7 +243,7 @@ class CommentManager:
         Args:
             comment_id (int): The ID of the Comment to update.
             data (Dict[str, Any]): A dictionary containing the data to update.
-                                  Keys should match Comment model field names (e.g., 'text_field').
+                                  Keys should match Comment model field names (e.g., 'text_field', 'moderation_status').
 
         Returns:
             Optional[Comment]: The updated Comment instance if found, otherwise None.
@@ -244,7 +253,7 @@ class CommentManager:
 
                 from litepolis_database_default import DatabaseActor
 
-                updated_comment = DatabaseActor.update_comment(comment_id=1, data={"text_field": "Updated comment text."})
+                updated_comment = DatabaseActor.update_comment(comment_id=1, data={"text_field": "Updated comment text.", "moderation_status": 1})
         """
         with get_session() as session:
             comment_instance = session.get(Comment, comment_id)

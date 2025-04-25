@@ -1,7 +1,8 @@
 """
 This module defines the Conversation model and ConversationManager class for interacting with the 'conversations' table in the database.
 
-The 'conversations' table stores information about conversations, including their title, description, archive status, and the user who created them.
+The 'conversations' table stores information about conversations, including their title, description, archive status,
+arbitrary settings in a JSON format, and the user who created them.
 It also includes timestamps for creation and modification.
 
 .. list-table:: Table Schema
@@ -31,6 +32,9 @@ It also includes timestamps for creation and modification.
    * - modified
      - DATETIME
      - Timestamp indicating when the conversation was last modified.
+   * - settings
+     - JSON
+     - Arbitrary key-value settings for the conversation.
 
 .. list-table:: Relationships
 
@@ -49,12 +53,14 @@ To use the methods in this module, import DatabaseActor.  For example::
     conversation = DatabaseActor.create_conversation({
         "title": "New Conversation",
         "description": "A new conversation about a topic.",
-        "user_id": 1
+        "user_id": 1,
+        "settings": {"visibility": "public"}
     })
 """
 
 
 from sqlalchemy import func, DDL, text
+from sqlalchemy.dialects.postgresql import JSON # Assuming PostgreSQL dialect for JSON
 from sqlmodel import SQLModel, Field, Relationship, Column, Index
 from sqlmodel import select, DateTime
 from typing import Optional, List, Type, Any, Dict, Generator
@@ -79,6 +85,7 @@ class Conversation(SQLModel, table=True):
     is_archived: bool = Field(default=False)
     created: datetime = Field(default_factory=lambda: datetime.now(UTC))
     modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    settings: Dict[str, Any] = Field(default={}, sa_column=Column(JSON))
 
     comments: List["Comment"] = Relationship(back_populates="conversation")
     user: Optional["User"] = Relationship(back_populates="conversation",
@@ -94,7 +101,8 @@ class ConversationManager:
         Args:
             data (Dict[str, Any]): A dictionary containing the data for the new Conversation.
                                   Expected keys include 'title' (required), 'description' (optional),
-                                  'is_archived' (optional, defaults to False), and 'user_id' (optional).
+                                  'is_archived' (optional, defaults to False), 'user_id' (optional),
+                                  and 'settings' (optional, defaults to {}).
 
         Returns:
             Conversation: The newly created Conversation instance.
@@ -107,7 +115,8 @@ class ConversationManager:
                 conversation = DatabaseActor.create_conversation({
                     "title": "New Conversation",
                     "description": "A new conversation about a topic.",
-                    "user_id": 1
+                    "user_id": 1,
+                    "settings": {"visibility": "public"}
                 })
         """
         with get_session() as session:
@@ -118,6 +127,8 @@ class ConversationManager:
                 # StarRocks doesn't support RETURNING, so we fetch the created object
                 # based on unique fields. This assumes user_id, title, and description
                 # are sufficiently unique for recent inserts.
+                # Note: Settings is not included in the fetch criteria as it's not guaranteed to be unique
+                # and might be complex to query directly in this manner.
                 return session.exec(
                     select(Conversation).where(
                         Conversation.user_id == data.get("user_id"),
@@ -194,6 +205,7 @@ class ConversationManager:
         Args:
             conversation_id (int): The ID of the Conversation to update.
             data (Dict[str, Any]): A dictionary containing the data to update.
+                                  Allowed keys include 'title', 'description', 'is_archived', 'user_id', and 'settings'.
 
         Returns:
             Optional[Conversation]: The updated Conversation instance if found, otherwise None.
@@ -203,7 +215,7 @@ class ConversationManager:
 
                 from litepolis_database_default import DatabaseActor
 
-                updated_conversation = DatabaseActor.update_conversation(conversation_id=1, data={"title": "Updated Title"})
+                updated_conversation = DatabaseActor.update_conversation(conversation_id=1, data={"title": "Updated Title", "settings": {"visibility": "private"}})
         """
         with get_session() as session:
             conversation_instance = session.get(Conversation, conversation_id)
