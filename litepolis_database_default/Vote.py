@@ -65,7 +65,7 @@ from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import UniqueConstraint, select
 from typing import Optional, List, Type, Any, Dict, Generator
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 from .utils import get_session, is_starrocks_engine
 
@@ -86,8 +86,8 @@ class Vote(SQLModel, table=True):
     value: int  = Field(nullable=False)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id")
     comment_id: Optional[int] = Field(default=None, foreign_key="comments.id")
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     user: Optional["User"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.user_id"})
     comment: Optional["Comment"] = Relationship(back_populates="votes", sa_relationship_kwargs={"foreign_keys": "Vote.comment_id"})

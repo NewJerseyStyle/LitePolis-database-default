@@ -84,12 +84,12 @@ To use the methods in this module, import `DatabaseActor` from
     })
 """
 
-from sqlalchemy import inspect, DDL
+from sqlalchemy import inspect, DDL, func
 from sqlalchemy import ForeignKeyConstraint
 from sqlmodel import SQLModel, Field, Relationship, Column, Index, ForeignKey
 from sqlmodel import select
 from typing import Optional, List, Type, Any, Dict, Generator
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 from .utils import get_session, is_starrocks_engine
 
@@ -108,8 +108,8 @@ class Comment(SQLModel, table=True):
 
 
     id: int = Field(primary_key=True)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     text_field: str = Field(nullable=False)
     user_id: Optional[int] = Field(default=None, foreign_key="users.id") # Removed redundant index=True
     conversation_id: Optional[int] = Field(default=None, foreign_key="conversations.id") # Removed redundant index=True
@@ -374,7 +374,7 @@ class CommentManager:
             .. code-block:: py
 
                 from litepolis_database_default import DatabaseActor
-                from datetime import datetime, UTC
+                from datetime import datetime, timezone
 
                 start = datetime(2023, 1, 1, tzinfo=UTC)
                 end = datetime(2023, 1, 31, tzinfo=UTC)
@@ -405,11 +405,9 @@ class CommentManager:
                 count = DatabaseActor.count_comments_in_conversation(conversation_id=1)
         """
         with get_session() as session:
-            # Use select(func.count()) for potentially better performance on some databases
-            # or simply count the results of the select statement.
-            # The current scalar(select(...).count()) is also valid SQLModel/SQLAlchemy.
+            # Use func.count() for counting
             count = session.scalar(
-                select(Comment).where(Comment.conversation_id == conversation_id).count()
+                select(func.count(Comment.id)).where(Comment.conversation_id == conversation_id)
             )
             return count if count is not None else 0
 

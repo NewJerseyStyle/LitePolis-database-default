@@ -17,6 +17,7 @@ dependencies = [
     "sqlparse",
     "inflection",
     "starrocks",
+    "litepolis",
 ]
 
 [project.license]

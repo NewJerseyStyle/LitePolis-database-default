@@ -64,7 +64,7 @@ from sqlalchemy.dialects.postgresql import JSON # Assuming PostgreSQL dialect fo
 from sqlmodel import SQLModel, Field, Relationship, Column, Index
 from sqlmodel import select, DateTime
 from typing import Optional, List, Type, Any, Dict, Generator
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 from .utils import get_session, is_starrocks_engine
 
@@ -83,8 +83,8 @@ class Conversation(SQLModel, table=True):
     title: str = Field(nullable=False)
     description: Optional[str] = None
     is_archived: bool = Field(default=False)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     settings: Dict[str, Any] = Field(default={}, sa_column=Column(JSON))
 
     comments: List["Comment"] = Relationship(back_populates="conversation")

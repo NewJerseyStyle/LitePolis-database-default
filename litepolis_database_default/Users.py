@@ -56,7 +56,7 @@ from sqlalchemy import DDL, text
 from sqlmodel import SQLModel, Field, Relationship, Column
 from sqlmodel import Index, UniqueConstraint, Session, select
 from typing import Optional, List, Type, Any, Dict, Generator
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 from .utils import get_session, is_starrocks_engine
 
@@ -75,8 +75,8 @@ class User(SQLModel, table=True):
     email: str = Field(nullable=False, unique=not is_starrocks_engine())
     auth_token: str = Field(nullable=False)
     is_admin: bool = Field(default=False)
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     comments: List["Comment"] = Relationship(back_populates="user")
     votes: List["Vote"] = Relationship(back_populates="user")
@@ -323,5 +323,6 @@ class UserManager:
 
             count = DatabaseActor.count_users()
         """
+        from sqlalchemy import func
         with get_session() as session:
-            return session.scalar(select(User).count()) or 0
+            return session.scalar(select(func.count(User.id))) or 0

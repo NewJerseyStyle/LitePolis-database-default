@@ -2,7 +2,7 @@ from sqlalchemy import DDL, text
 from sqlmodel import SQLModel, Field, Column, Index
 from sqlmodel import select
 from typing import Optional, List, Type, Any, Dict, Generator
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 from .utils import get_session, is_starrocks_engine
 import hashlib
@@ -17,7 +17,7 @@ class MigrationRecord(SQLModel, table=True):
     )
     id: str = Field(primary_key=True)  # Migration filename
     hash: str = Field(nullable=False)  # Content hash
-    executed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class MigrationRecordManager:
