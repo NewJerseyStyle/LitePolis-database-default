@@ -60,6 +60,7 @@ To use the methods in this module, import DatabaseActor.  For example::
 
 
 from sqlalchemy import func, DDL, text
+from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy.dialects.postgresql import JSON # Assuming PostgreSQL dialect for JSON
 from sqlmodel import SQLModel, Field, Relationship, Column, Index
 from sqlmodel import select, DateTime
@@ -223,6 +224,9 @@ class ConversationManager:
                 return None
             for key, value in data.items():
                 setattr(conversation_instance, key, value)
+                # Mark JSON fields as modified so SQLAlchemy detects the change
+                if key == "settings":
+                    flag_modified(conversation_instance, key)
             session.add(conversation_instance)
             session.commit()
             if is_starrocks_engine():

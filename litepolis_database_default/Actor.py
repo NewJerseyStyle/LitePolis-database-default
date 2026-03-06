@@ -9,6 +9,17 @@ from .Participant import ParticipantManager
 from .Zinvite import ZinviteManager
 from .Einvite import EinviteManager
 from .MigrationRecord import MigrationRecordManager
+from .PasswordReset import PasswordResetTokenManager
+
+# Import models to register them with SQLModel
+from .Users import User
+from .Conversations import Conversation
+from .Comments import Comment
+from .Vote import Vote
+from .Participant import Participant
+from .Zinvite import Zinvite
+from .Einvite import Einvite
+from .PasswordReset import PasswordResetToken
 
 from .utils_StarRocks import create_db_and_tables
 create_db_and_tables()
@@ -20,7 +31,8 @@ class DatabaseActor(
     VoteManager,
     ParticipantManager,
     ZinviteManager,
-    EinviteManager
+    EinviteManager,
+    PasswordResetTokenManager
 ):
     """
     DatabaseActor class for LitePolis.

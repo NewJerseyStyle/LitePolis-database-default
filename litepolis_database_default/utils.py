@@ -6,6 +6,7 @@ from typing import Optional, Dict, Any, Tuple, List
 import sqlparse
 import inflection
 from sqlalchemy import text
+from sqlalchemy.pool import NullPool, StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
 from litepolis import get_config
@@ -13,8 +14,8 @@ from litepolis import get_config
 DEFAULT_CONFIG = {
     "database_url": "sqlite:///database.db",
     # "database_url": "starrocks://litepolis:securePass123!@localhost:9030/litepolis_default",
-    "sqlalchemy_engine_pool_size": 10,
-    "sqlalchemy_pool_max_overflow": 20,
+    "sqlalchemy_engine_pool_size": 30,
+    "sqlalchemy_pool_max_overflow": 50,
 }
 
 database_url = DEFAULT_CONFIG.get("database_url")
@@ -33,14 +34,38 @@ except (ValueError, Exception) as e:
 
 @contextmanager
 def get_session():
-    yield Session(engine, autoflush=False, autocommit=False)
+    session = Session(engine, autoflush=False, autocommit=False)
+    try:
+        yield session
+    finally:
+        session.close()
 
 
-engine = create_engine(database_url,
-                        pool_size=engine_pool_size,
-                        max_overflow=pool_max_overflow,
-                        pool_timeout=30,
-                        pool_pre_ping=True)
+# Create engine with appropriate settings based on database type
+def _create_engine_with_settings():
+    """Create engine with settings appropriate for the database type."""
+    is_sqlite = database_url.startswith("sqlite")
+    
+    if is_sqlite:
+        # SQLite: use StaticPool for single connection, check_same_thread=False for multi-threading
+        return create_engine(
+            database_url,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+            pool_pre_ping=True
+        )
+    else:
+        # Other databases: use connection pooling with higher limits
+        return create_engine(
+            database_url,
+            pool_size=engine_pool_size,
+            max_overflow=pool_max_overflow,
+            pool_timeout=60,
+            pool_recycle=1800,  # Recycle connections after 30 minutes
+            pool_pre_ping=True
+        )
+
+engine = _create_engine_with_settings()
 
 def is_starrocks_engine(engine=engine) -> bool:
     """Determine if the engine is connected to StarRocks"""
@@ -62,18 +87,8 @@ def is_starrocks_engine(engine=engine) -> bool:
         return False
 
 def connect_db():
-    engine = create_engine(database_url,
-                            pool_size=engine_pool_size,
-                            max_overflow=pool_max_overflow,
-                            pool_timeout=30,
-                            pool_pre_ping=True)
-
-    if is_starrocks_engine(engine):
-        engine.update_execution_options(
-            isolation_level="AUTOCOMMIT",  # Bypass transaction issues
-            stream_results=False           # Disable streaming for OLAP
-        )
-    
+    """Initialize database connection. Engine is already created globally."""
+    # Engine is already created at module level, just return it
     return engine
 
 connect_db()

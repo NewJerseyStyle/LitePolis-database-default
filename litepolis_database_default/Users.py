@@ -74,6 +74,7 @@ class User(SQLModel, table=True):
     id: Optional[int] = Field(primary_key=True)
     email: str = Field(nullable=False, unique=not is_starrocks_engine())
     auth_token: str = Field(nullable=False)
+    hname: Optional[str] = Field(default=None)  # human name
     is_admin: bool = Field(default=False)
     created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
