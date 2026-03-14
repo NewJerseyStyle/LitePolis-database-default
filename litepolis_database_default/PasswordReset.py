@@ -8,9 +8,11 @@ from typing import Optional
 from datetime import datetime, timezone, timedelta
 import secrets
 
-from .utils import get_session
+from .utils import get_session, is_starrocks_engine
+from .utils_StarRocks import register_table
 
 
+@register_table(distributed_by="HASH(id)")
 class PasswordResetToken(SQLModel, table=True):
     __tablename__ = "password_reset_tokens"
     __table_args__ = (
@@ -35,6 +37,10 @@ class PasswordResetTokenManager:
         with get_session() as session:
             session.add(reset_token)
             session.commit()
+            if is_starrocks_engine():
+                return session.exec(
+                    select(PasswordResetToken).where(PasswordResetToken.token == token)
+                ).first()
             session.refresh(reset_token)
             return reset_token
     

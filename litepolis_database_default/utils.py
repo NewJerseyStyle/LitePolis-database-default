@@ -18,18 +18,22 @@ DEFAULT_CONFIG = {
     "sqlalchemy_pool_max_overflow": 50,
 }
 
-database_url = DEFAULT_CONFIG.get("database_url")
-engine_pool_size = DEFAULT_CONFIG.get("sqlalchemy_engine_pool_size")
-pool_max_overflow = DEFAULT_CONFIG.get("sqlalchemy_pool_max_overflow")
-try:
-    if ("PYTEST_CURRENT_TEST" not in os.environ and
-        "PYTEST_VERSION" not in os.environ):
-        database_url = get_config("litepolis_database_default", "database_url")
-        engine_pool_size = get_config("litepolis_database_default", "sqlalchemy_engine_pool_size")
-        pool_max_overflow = get_config("litepolis_database_default", "sqlalchemy_pool_max_overflow")
-except (ValueError, Exception) as e:
-    # Config actor not available yet, use defaults
-    pass
+# Priority: 1. Environment variable, 2. LitePolis config, 3. Default
+database_url = os.environ.get("DATABASE_URL") or DEFAULT_CONFIG.get("database_url")
+engine_pool_size = int(os.environ.get("SQLALCHEMY_POOL_SIZE") or DEFAULT_CONFIG.get("sqlalchemy_engine_pool_size"))
+pool_max_overflow = int(os.environ.get("SQLALCHEMY_POOL_MAX_OVERFLOW") or DEFAULT_CONFIG.get("sqlalchemy_pool_max_overflow"))
+
+# Try to get from LitePolis config if not overridden by environment
+if not os.environ.get("DATABASE_URL"):
+    try:
+        if ("PYTEST_CURRENT_TEST" not in os.environ and
+            "PYTEST_VERSION" not in os.environ):
+            database_url = get_config("litepolis_database_default", "database_url")
+            engine_pool_size = int(get_config("litepolis_database_default", "sqlalchemy_engine_pool_size"))
+            pool_max_overflow = int(get_config("litepolis_database_default", "sqlalchemy_pool_max_overflow"))
+    except (ValueError, Exception) as e:
+        # Config actor not available yet, use defaults
+        pass
 
 
 @contextmanager
