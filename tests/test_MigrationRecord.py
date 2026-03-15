@@ -1,7 +1,8 @@
 from litepolis_database_default.MigrationRecord import MigrationRecordManager
 import pytest
 from typing import Optional
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+UTC = timezone.utc
 
 def test_create_migration_record():
     # Create migration record

@@ -6,6 +6,7 @@ from typing import Optional, Dict, Any, Tuple, List
 import sqlparse
 import inflection
 from sqlalchemy import text
+from sqlalchemy.pool import NullPool, StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
 from litepolis import get_config
@@ -13,34 +14,62 @@ from litepolis import get_config
 DEFAULT_CONFIG = {
     "database_url": "sqlite:///database.db",
     # "database_url": "starrocks://litepolis:securePass123!@localhost:9030/litepolis_default",
-    "sqlalchemy_engine_pool_size": 10,
-    "sqlalchemy_pool_max_overflow": 20,
+    "sqlalchemy_engine_pool_size": 30,
+    "sqlalchemy_pool_max_overflow": 50,
 }
 
-database_url = DEFAULT_CONFIG.get("database_url")
-engine_pool_size = DEFAULT_CONFIG.get("sqlalchemy_engine_pool_size")
-pool_max_overflow = DEFAULT_CONFIG.get("sqlalchemy_pool_max_overflow")
-try:
-    if ("PYTEST_CURRENT_TEST" not in os.environ and
-        "PYTEST_VERSION" not in os.environ):
-        database_url = get_config("litepolis_database_default", "database_url")
-        engine_pool_size = get_config("litepolis_database_default", "sqlalchemy_engine_pool_size")
-        pool_max_overflow = get_config("litepolis_database_default", "sqlalchemy_pool_max_overflow")
-except (ValueError, Exception) as e:
-    # Config actor not available yet, use defaults
-    pass
+# Priority: 1. Environment variable, 2. LitePolis config, 3. Default
+database_url = os.environ.get("DATABASE_URL") or DEFAULT_CONFIG.get("database_url")
+engine_pool_size = int(os.environ.get("SQLALCHEMY_POOL_SIZE") or DEFAULT_CONFIG.get("sqlalchemy_engine_pool_size"))
+pool_max_overflow = int(os.environ.get("SQLALCHEMY_POOL_MAX_OVERFLOW") or DEFAULT_CONFIG.get("sqlalchemy_pool_max_overflow"))
+
+# Try to get from LitePolis config if not overridden by environment
+if not os.environ.get("DATABASE_URL"):
+    try:
+        if ("PYTEST_CURRENT_TEST" not in os.environ and
+            "PYTEST_VERSION" not in os.environ):
+            database_url = get_config("litepolis_database_default", "database_url")
+            engine_pool_size = int(get_config("litepolis_database_default", "sqlalchemy_engine_pool_size"))
+            pool_max_overflow = int(get_config("litepolis_database_default", "sqlalchemy_pool_max_overflow"))
+    except (ValueError, Exception) as e:
+        # Config actor not available yet, use defaults
+        pass
 
 
 @contextmanager
 def get_session():
-    yield Session(engine, autoflush=False, autocommit=False)
+    session = Session(engine, autoflush=False, autocommit=False)
+    try:
+        yield session
+    finally:
+        session.close()
 
 
-engine = create_engine(database_url,
-                        pool_size=engine_pool_size,
-                        max_overflow=pool_max_overflow,
-                        pool_timeout=30,
-                        pool_pre_ping=True)
+# Create engine with appropriate settings based on database type
+def _create_engine_with_settings():
+    """Create engine with settings appropriate for the database type."""
+    is_sqlite = database_url.startswith("sqlite")
+    
+    if is_sqlite:
+        # SQLite: use StaticPool for single connection, check_same_thread=False for multi-threading
+        return create_engine(
+            database_url,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+            pool_pre_ping=True
+        )
+    else:
+        # Other databases: use connection pooling with higher limits
+        return create_engine(
+            database_url,
+            pool_size=engine_pool_size,
+            max_overflow=pool_max_overflow,
+            pool_timeout=60,
+            pool_recycle=1800,  # Recycle connections after 30 minutes
+            pool_pre_ping=True
+        )
+
+engine = _create_engine_with_settings()
 
 def is_starrocks_engine(engine=engine) -> bool:
     """Determine if the engine is connected to StarRocks"""
@@ -62,18 +91,8 @@ def is_starrocks_engine(engine=engine) -> bool:
         return False
 
 def connect_db():
-    engine = create_engine(database_url,
-                            pool_size=engine_pool_size,
-                            max_overflow=pool_max_overflow,
-                            pool_timeout=30,
-                            pool_pre_ping=True)
-
-    if is_starrocks_engine(engine):
-        engine.update_execution_options(
-            isolation_level="AUTOCOMMIT",  # Bypass transaction issues
-            stream_results=False           # Disable streaming for OLAP
-        )
-    
+    """Initialize database connection. Engine is already created globally."""
+    # Engine is already created at module level, just return it
     return engine
 
 connect_db()

@@ -47,6 +47,46 @@ Vote module
    :show-inheritance:
    :undoc-members:
 
+Participant module
+----------------------------------------
+
+.. automodule:: litepolis_database_default.Participant
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Zinvite module
+----------------------------------------
+
+.. automodule:: litepolis_database_default.Zinvite
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Einvite module
+----------------------------------------
+
+.. automodule:: litepolis_database_default.Einvite
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+PasswordReset module
+----------------------------------------
+
+.. automodule:: litepolis_database_default.PasswordReset
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+MigrationRecord module
+----------------------------------------
+
+.. automodule:: litepolis_database_default.MigrationRecord
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 utils module
 -----------------------------------------
 
