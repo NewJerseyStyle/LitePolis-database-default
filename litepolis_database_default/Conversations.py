@@ -396,3 +396,49 @@ class ConversationManager:
                 ).first()
             session.refresh(conversation_instance)
             return conversation_instance
+
+    @staticmethod
+    def list_conversations_by_user(user_id: int) -> List[Conversation]:
+        """Lists all conversations created by a specific user.
+
+        Args:
+            user_id: The ID of the user whose conversations to list.
+
+        Returns:
+            List[Conversation]: A list of Conversation instances created by the user.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                conversations = DatabaseActor.list_conversations_by_user(user_id=1)
+        """
+        with get_session() as session:
+            statement = select(Conversation).where(Conversation.user_id == user_id)
+            return session.exec(statement).all()
+
+    @staticmethod
+    def is_moderator(zid: int, uid: int) -> bool:
+        """Checks if a user is a moderator of a conversation by ZID.
+
+        Args:
+            zid: The conversation ID.
+            uid: The user ID.
+
+        Returns:
+            bool: True if the user is the moderator (owner) of the conversation, False otherwise.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                is_mod = DatabaseActor.is_moderator(zid=1, uid=1)
+        """
+        with get_session() as session:
+            statement = select(Conversation).where(
+                Conversation.id == zid,
+                Conversation.user_id == uid
+            )
+            return session.exec(statement).first() is not None

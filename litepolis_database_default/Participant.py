@@ -69,6 +69,11 @@ class Participant(SQLModel, table=True):
     modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     vote_count: int = Field(default=0)
     mod: int = Field(default=0)
+    # ParticiAPI compatibility fields
+    last_interaction: int = Field(default=0)
+    subscribed: int = Field(default=0)
+    last_notified: Optional[int] = Field(default=0)
+    nsli: int = Field(default=0)
 
 
 class ParticipantManager:

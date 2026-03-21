@@ -327,3 +327,25 @@ class UserManager:
         from sqlalchemy import func
         with get_session() as session:
             return session.scalar(select(func.count(User.id))) or 0
+
+    @staticmethod
+    def read_user_by_reset_token(reset_token: str) -> Optional[User]:
+        """Retrieves a user by their password reset token.
+
+        Args:
+            reset_token: The password reset token to search for.
+
+        Returns:
+            Optional[User]: The user if found, otherwise None.
+
+        Example:
+            .. code-block:: python
+
+                from litepolis_database_default import DatabaseActor
+
+                user = DatabaseActor.read_user_by_reset_token("abc123")
+        """
+        with get_session() as session:
+            statement = select(User).where(User.reset_token == reset_token)
+            user = session.exec(statement).first()
+            return user
