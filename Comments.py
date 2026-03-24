@@ -115,7 +115,6 @@ class Comment(SQLModel, table=True):
     conversation_id: Optional[int] = Field(default=None, foreign_key="conversations.id") # Removed redundant index=True
     parent_comment_id: Optional[int] = Field(default=None, foreign_key="comments.id", nullable=True)
     moderation_status: int = Field(default=0)
-    is_seed: bool = Field(default=False)
 
     user: Optional["User"] = Relationship(back_populates="comments")
     conversation: Optional["Conversation"] = Relationship(back_populates="comments")

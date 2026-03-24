@@ -1,4 +1,3 @@
-import os
 from typing import Dict, Any, List
 from sqlmodel import SQLModel
 
@@ -25,12 +24,7 @@ from .PasswordReset import PasswordResetToken
 from .MathResult import MathResult
 
 from .utils_StarRocks import create_db_and_tables
-
-# Only auto-create tables if not explicitly disabled
-# This allows importing the module without triggering table creation
-# (useful when extending with additional models)
-if os.environ.get("LITEPOLIS_AUTO_CREATE_TABLES", "true").lower() != "false":
-    create_db_and_tables()
+create_db_and_tables()
 
 class DatabaseActor(
     UserManager, 
